@@ -1,0 +1,150 @@
+{
+  "stats": [
+    {
+      "name": "Total Revenue",
+      "value": "$45,231.89",
+      "change": "+20.1%",
+      "trend": "up",
+      "icon": "DollarSign",
+      "color": "text-emerald-600",
+      "bg": "bg-emerald-50"
+    },
+    {
+      "name": "Orders",
+      "value": "+2,350",
+      "change": "+180.1%",
+      "trend": "up",
+      "icon": "ShoppingBag",
+      "color": "text-blue-600",
+      "bg": "bg-blue-50"
+    },
+    {
+      "name": "New Customers",
+      "value": "+1,203",
+      "change": "+19%",
+      "trend": "up",
+      "icon": "Users",
+      "color": "text-violet-600",
+      "bg": "bg-violet-50"
+    },
+    {
+      "name": "Active Sessions",
+      "value": "573",
+      "change": "-4.5%",
+      "trend": "down",
+      "icon": "TrendingUp",
+      "color": "text-amber-600",
+      "bg": "bg-amber-50"
+    }
+  ],
+  "products": [
+    {
+      "id": "PROD-001",
+      "name": "Premium Cotton T-Shirt",
+      "category": "Mens Fashion",
+      "price": "$59.00",
+      "stock": 124,
+      "status": "In Stock",
+      "image": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=100&h=100&fit=crop"
+    },
+    {
+      "id": "PROD-002",
+      "name": "Slim Fit Chinos",
+      "category": "Mens Fashion",
+      "price": "$89.00",
+      "stock": 85,
+      "status": "In Stock",
+      "image": "https://images.unsplash.com/photo-1624371414361-e6e0efc5836f?w=100&h=100&fit=crop"
+    },
+    {
+      "id": "PROD-003",
+      "name": "Silk Blouse",
+      "category": "Womens Fashion",
+      "price": "$129.00",
+      "stock": 12,
+      "status": "Low Stock",
+      "image": "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=100&h=100&fit=crop"
+    },
+    {
+      "id": "PROD-004",
+      "name": "Leather Weekend Bag",
+      "category": "Accessories",
+      "price": "$249.00",
+      "stock": 0,
+      "status": "Out of Stock",
+      "image": "https://images.unsplash.com/photo-1547949003-9792a18a2601?w=100&h=100&fit=crop"
+    },
+    {
+      "id": "PROD-005",
+      "name": "Classic Denim Jacket",
+      "category": "Mens Fashion",
+      "price": "$159.00",
+      "stock": 45,
+      "status": "In Stock",
+      "image": "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=100&h=100&fit=crop"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-7432",
+      "customer": "John Doe",
+      "email": "john@example.com",
+      "total": "$59.00",
+      "status": "Delivered",
+      "payment": "Paid",
+      "date": "2 mins ago",
+      "items": 1
+    },
+    {
+      "id": "ORD-7431",
+      "customer": "Sarah Smith",
+      "email": "sarah@example.com",
+      "total": "$178.00",
+      "status": "Processing",
+      "payment": "Paid",
+      "date": "15 mins ago",
+      "items": 2
+    },
+    {
+      "id": "ORD-7430",
+      "customer": "Michael Brown",
+      "email": "michael@example.com",
+      "total": "$249.00",
+      "status": "Shipped",
+      "payment": "Paid",
+      "date": "1 hour ago",
+      "items": 1
+    },
+    {
+      "id": "ORD-7429",
+      "customer": "Emily Davis",
+      "email": "emily@example.com",
+      "total": "$129.00",
+      "status": "Delivered",
+      "payment": "Paid",
+      "date": "3 hours ago",
+      "items": 1
+    },
+    {
+      "id": "ORD-7428",
+      "customer": "David Wilson",
+      "email": "david@example.com",
+      "total": "$318.00",
+      "status": "Cancelled",
+      "payment": "Refunded",
+      "date": "Yesterday",
+      "items": 3
+    }
+  ],
+  "categories": [
+    { "id": "CAT-001", "name": "Mens Fashion", "products": 45, "status": "Active" },
+    { "id": "CAT-002", "name": "Womens Fashion", "products": 38, "status": "Active" },
+    { "id": "CAT-003", "name": "Accessories", "products": 12, "status": "Active" },
+    { "id": "CAT-004", "name": "Footwear", "products": 24, "status": "Inactive" }
+  ],
+  "customers": [
+    { "id": "CUST-001", "name": "John Doe", "email": "john@example.com", "orders": 5, "spent": "$450.00", "status": "Active" },
+    { "id": "CUST-002", "name": "Sarah Smith", "email": "sarah@example.com", "orders": 2, "spent": "$178.00", "status": "Active" },
+    { "id": "CUST-003", "name": "Michael Brown", "email": "michael@example.com", "orders": 1, "spent": "$249.00", "status": "Inactive" }
+  ]
+}
