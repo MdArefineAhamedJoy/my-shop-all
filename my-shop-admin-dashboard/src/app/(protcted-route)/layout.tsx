@@ -27,10 +27,10 @@ export default function ProtectedLayout({
           isCollapsed ? "md:pl-20" : "md:pl-[280px]"
         )}
       >
-        <Header />
+        {/* <Header /> */}
         
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6 lg:p-10 max-w-7xl mx-auto w-full">
+          <div className="p-2 max-w-full mx-auto w-full">
             {children}
           </div>
         </main>
