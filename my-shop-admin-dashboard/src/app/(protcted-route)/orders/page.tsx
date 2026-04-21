@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Eye, Download, ShoppingBag, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getFakeData } from "@/lib/data";
+import ordersData from "@/data/orders.json";
 import ReUsebleTable from "@/components/shared/ReUsebleTable";
+import StatsCards from "@/components/shared/StatsCards";
 import ReUseblePagination from "@/components/shared/Pagination";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -80,6 +82,15 @@ export default function OrdersPage() {
     </div>
   );
 
+  // Calculations
+  const totalRevenue = ordersData.reduce((acc, order) => acc + (order.status !== "Cancelled" ? order.total : 0), 0);
+  const pendingOrders = ordersData.filter(o => o.status === "Pending" || o.status === "Processing").length;
+  const pendingAmount = ordersData
+    .filter(o => o.status === "Pending" || o.status === "Processing")
+    .reduce((acc, order) => acc + order.total, 0);
+  const completedOrders = ordersData.filter(o => o.status === "Delivered").length;
+  const cancelledOrders = ordersData.filter(o => o.status === "Cancelled").length;
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -93,30 +104,54 @@ export default function OrdersPage() {
       </div>
 
       {/* Order Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Orders", value: "2,350", icon: ShoppingBag, color: "text-blue-600", bg: "bg-blue-50" },
-          { label: "Pending", value: "12", icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-          { label: "Completed", value: "2,140", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
-          { label: "Cancelled", value: "45", icon: XCircle, color: "text-red-600", bg: "bg-red-50" },
-        ].map((stat) => (
-          <Card key={stat.label} className="border-none shadow-sm hover:shadow-md transition-all">
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className={cn("p-2.5 rounded-xl", stat.bg, stat.color)}>
-                <stat.icon size={20} />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
-                <p className="text-lg font-black text-slate-900">{stat.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <StatsCards 
+        stats={[
+          { 
+            label: "Total Revenue", 
+            value: totalRevenue.toLocaleString(), 
+            unit: "TK",
+            icon: ShoppingBag, 
+            color: "text-blue-500", 
+            bg: "bg-blue-50",
+            accent: "bg-blue-500",
+            sub: `${ordersData.length} Total Orders`
+          },
+          { 
+            label: "Pending", 
+            value: pendingOrders, 
+            unit: "Orders",
+            icon: Clock, 
+            color: "text-amber-500", 
+            bg: "bg-amber-50",
+            accent: "bg-amber-500",
+            sub: `${pendingAmount.toLocaleString()} TK Expected`
+          },
+          { 
+            label: "Completed", 
+            value: completedOrders, 
+            unit: "Orders",
+            icon: CheckCircle2, 
+            color: "text-emerald-500", 
+            bg: "bg-emerald-50",
+            accent: "bg-emerald-500",
+            sub: "Successfully Delivered"
+          },
+          { 
+            label: "Cancelled", 
+            value: cancelledOrders, 
+            unit: "Orders",
+            icon: XCircle, 
+            color: "text-red-500", 
+            bg: "bg-red-50",
+            accent: "bg-red-500",
+            sub: "Lost Revenue"
+          },
+        ]}
+      />
 
       <div className="space-y-0 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
         <ReUsebleTable
-          data={data.orders}
+          data={ordersData}
           columns={columns}
           actions={actions}
           searchPlaceholder="Search by order ID, customer, or status..."
