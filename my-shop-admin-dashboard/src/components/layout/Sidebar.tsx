@@ -276,7 +276,7 @@ export default function Sidebar() {
       <motion.aside
         animate={{ width: isCollapsed ? 80 : 280 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
-        className="fixed left-0 top-0 z-40 hidden h-screen border-r border-slate-200/60 bg-white md:block overflow-hidden shadow-[10px_0_40px_-15px_rgba(0,0,0,0.05)]"
+        className="hidden h-screen border-r border-slate-200/60 bg-white md:block overflow-hidden shadow-[10px_0_40px_-15px_rgba(0,0,0,0.05)] shrink-0"
       >
         <SidebarContent {...sharedProps} />
       </motion.aside>

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   Pagination,
   PaginationContent,
@@ -27,10 +26,9 @@ export default function ReUseblePagination({
 }: ReUseblePaginationProps) {
   const pages = [];
   
-  // Logic to show a few pages around current page
   const maxVisible = 5;
   let start = Math.max(1, currentPage - 2);
-  let end = Math.min(totalPages, start + maxVisible - 1);
+  const end = Math.min(totalPages, start + maxVisible - 1);
   
   if (end - start < maxVisible - 1) {
     start = Math.max(1, end - maxVisible + 1);
@@ -41,7 +39,7 @@ export default function ReUseblePagination({
   }
 
   return (
-    <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-white border-t border-slate-50", className)}>
+    <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white border border-gray-300", className)}>
       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
         Showing Page <span className="text-slate-900">{currentPage}</span> of <span className="text-slate-900">{totalPages}</span>
       </p>
