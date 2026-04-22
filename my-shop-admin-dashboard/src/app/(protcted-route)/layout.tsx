@@ -21,12 +21,7 @@ export default function ProtectedLayout({
       <Sidebar />
       
       {/* Main Content Area */}
-      <div 
-        className={cn(
-          "flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300 ease-in-out",
-          isCollapsed ? "md:pl-20" : "md:pl-[280px]"
-        )}
-      >
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* <Header /> */}
         
         <main className="flex-1 overflow-y-auto">

@@ -10,8 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Search, Filter, ArrowUpDown, MoreVertical } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Column<T> {
@@ -24,56 +23,26 @@ interface Column<T> {
 interface ReUsebleTableProps<T> {
   data: T[];
   columns: Column<T>[];
-  title?: string;
-  description?: string;
-  onSearch?: (term: string) => void;
-  searchPlaceholder?: string;
   actions?: (item: T) => React.ReactNode;
 }
 
 export default function ReUsebleTable<T extends { id: string | number }>({
   data,
   columns,
-  onSearch,
-  searchPlaceholder = "Search...",
   actions,
 }: ReUsebleTableProps<T>) {
   return (
-    <Card className="border-none shadow-sm overflow-hidden bg-white">
-      <div className="p-6 border-b border-slate-50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-sm group">
-            <Search 
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" 
-              size={18} 
-            />
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              onChange={(e) => onSearch?.(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-200 transition-all font-medium"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="rounded-xl h-10 px-4 font-bold text-slate-600">
-              <Filter size={16} className="mr-2" /> Filter
-            </Button>
-            <Button variant="outline" size="sm" className="rounded-xl h-10 px-4 font-bold text-slate-600">
-              Export
-            </Button>
-          </div>
-        </div>
-      </div>
+    <Card className="border shadow-none rounded-none overflow-hidden bg-white">
       <CardContent className="p-0">
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="bg-slate-50/50">
+            <TableRow className="hover:bg-transparent border-slate-100">
               {columns.map((column, index) => (
                 <TableHead 
                   key={index} 
-                  className={cn(column.className)}
+                  className={cn("h-14 py-4 px-6", column.className)}
                 >
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors group">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors group text-sm font-bold text-slate-600 uppercase tracking-tight">
                     {column.header}
                     <ArrowUpDown size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
