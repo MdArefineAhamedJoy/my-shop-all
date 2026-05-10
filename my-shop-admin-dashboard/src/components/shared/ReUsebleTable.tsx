@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Column<T> {
+export interface Column<T> {
   header: string;
   accessorKey: keyof T | string;
   cell?: (item: T) => React.ReactNode;
@@ -24,6 +24,7 @@ interface ReUsebleTableProps<T> {
   data: T[];
   columns: Column<T>[];
   actions?: (item: T) => React.ReactNode;
+  searchPlaceholder?: string;
 }
 
 export default function ReUsebleTable<T extends { id: string | number }>({
@@ -32,23 +33,23 @@ export default function ReUsebleTable<T extends { id: string | number }>({
   actions,
 }: ReUsebleTableProps<T>) {
   return (
-    <Card className="border shadow-none rounded-none overflow-hidden bg-white">
+    <Card className="border border-slate-200 shadow-sm rounded-t-sm rounded-b-none overflow-hidden bg-white min-h-[500px]">
       <CardContent className="p-0">
         <Table>
-          <TableHeader className="bg-slate-50/50">
+          <TableHeader className="bg-white border-b-2 border-gray-300 py-3">
             <TableRow className="hover:bg-transparent border-slate-100">
               {columns.map((column, index) => (
                 <TableHead 
                   key={index} 
                   className={cn("h-14 py-4 px-6", column.className)}
                 >
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors group text-sm font-bold text-slate-600 uppercase tracking-tight">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-black transition-colors group text-sm font-bold text-slate-900 uppercase tracking-wider ">
                     {column.header}
                     <ArrowUpDown size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </TableHead>
               ))}
-              {actions && <TableHead className="text-right">Actions</TableHead>}
+              {actions && <TableHead className="text-right px-6 text-sm font-bold text-slate-900 uppercase tracking-wider">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>

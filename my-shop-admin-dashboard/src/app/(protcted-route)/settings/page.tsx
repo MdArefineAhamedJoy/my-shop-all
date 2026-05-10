@@ -47,7 +47,7 @@ export default function SettingsPage() {
             <Card className="border-none shadow-sm">
               <CardHeader>
                 <CardTitle>Store Information</CardTitle>
-                <CardDescription>Update your store's basic information and branding.</CardDescription>
+                <CardDescription>Update your store&apos;s basic information and branding.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -88,7 +88,7 @@ export default function SettingsPage() {
             <Card className="border-none shadow-sm">
               <CardHeader>
                 <CardTitle>Connected Accounts</CardTitle>
-                <CardDescription>Manage your store's external service integrations.</CardDescription>
+                <CardDescription>Manage your store&apos;s external service integrations.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {[

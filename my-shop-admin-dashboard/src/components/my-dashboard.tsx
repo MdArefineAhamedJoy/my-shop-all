@@ -32,7 +32,7 @@ export default function MyDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 font-medium text-sm">Welcome back! Here's what's happening with your store today.</p>
+          <p className="text-slate-500 font-medium text-sm">Welcome back! Here&apos;s what&apos;s happening with your store today.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" className="rounded-xl">Download Report</Button>
