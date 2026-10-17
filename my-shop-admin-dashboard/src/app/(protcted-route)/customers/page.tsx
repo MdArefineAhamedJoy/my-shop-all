@@ -7,11 +7,16 @@ import { cn } from "@/lib/utils";
 import { getFakeData } from "@/lib/data";
 import ReUsebleTable from "@/components/shared/ReUsebleTable";
 import ReUseblePagination from "@/components/shared/Pagination";
+import CustomerDetailsSheet from "@/components/shared/CustomerDetailsSheet";
 
 const data = getFakeData();
 
 export default function CustomersPage() {
+  const data = getFakeData();
+  const [customers, setCustomers] = React.useState(data.customers);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [selectedCustomer, setSelectedCustomer] = React.useState<any>(null);
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const columns = [
     {
@@ -68,7 +73,15 @@ export default function CustomersPage() {
       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
         <Phone size={16} />
       </Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg"
+        onClick={() => {
+          setSelectedCustomer(customer);
+          setIsSheetOpen(true);
+        }}
+      >
         <Eye size={16} />
       </Button>
     </div>
@@ -88,7 +101,7 @@ export default function CustomersPage() {
 
       <div className="space-y-0 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
         <ReUsebleTable
-          data={data.customers}
+          data={customers}
           columns={columns}
           actions={actions}
           searchPlaceholder="Search by name, email, or status..."
@@ -99,6 +112,12 @@ export default function CustomersPage() {
           onPageChange={setCurrentPage}
         />
       </div>
+
+      <CustomerDetailsSheet 
+        customer={selectedCustomer}
+        isOpen={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
     </div>
   );
 }

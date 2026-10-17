@@ -32,7 +32,7 @@ export default function MyDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 font-medium text-sm">Welcome back! Here's what's happening with your store today.</p>
+          <p className="text-slate-500 font-medium text-sm">Welcome back! Here&apos;s what&apos;s happening with your store today.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" className="rounded-xl">Download Report</Button>
@@ -157,6 +157,29 @@ export default function MyDashboard() {
               <Button variant="premium" className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold border-none shadow-none py-6">
                 Upgrade Plan
               </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base">Top Selling Products</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.products.slice(0, 3).map((product, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                    <ShoppingBag size={18} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-slate-900 truncate max-w-[120px]">{product.name}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{product.price} TK</span>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <p className="text-xs font-black text-slate-900">{120 - (idx * 15)}</p>
+                    <p className="text-[8px] font-bold text-slate-400 uppercase">Sales</p>
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
 

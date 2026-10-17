@@ -39,7 +39,7 @@ export default function ReUseblePagination({
   }
 
   return (
-    <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white border border-gray-300", className)}>
+    <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-4 p-4 py-3 bg-white border border-gray-300 rounded-b-sm", className)}>
       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
         Showing Page <span className="text-slate-900">{currentPage}</span> of <span className="text-slate-900">{totalPages}</span>
       </p>

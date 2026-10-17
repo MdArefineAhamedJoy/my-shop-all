@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "MYSHOP",
+    "slug": "my-shop-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "myshop",
+    "experiments": { "typedRoutes": true },
+    "plugins": ["expo-router", "expo-status-bar", "expo-video", "expo-font"],
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   X,
   LogOut,
-  Store
+  Store,
+  XCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -34,18 +35,13 @@ import Image from "next/image";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  {
-    name: "Products",
-    href: "/products",
-    icon: ShoppingBag,
-    submenu: [
-      { name: "All Products", href: "/products", icon: Package },
-      { name: "Add New", href: "/products/new", icon: PlusCircle },
-    ],
-  },
+  { name: "Products", href: "/products", icon: ShoppingBag },
   { name: "Categories", href: "/categories", icon: Layers },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
+  { name: "Invoices", href: "/invoices", icon: Layers },
+  { name: "Returns", href: "/returns", icon: XCircle },
   { name: "Customers", href: "/customers", icon: Users },
+  { name: "Storefront", href: "/storefront", icon: Store },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -69,7 +65,7 @@ const SidebarContent = ({
       {/* Logo Section */}
       <div className={cn(
         "flex items-center h-20 border-b border-slate-200/60 transition-all duration-300",
-        isCollapsed ? "justify-center" : "px-6 gap-3"
+        isCollapsed ? "justify-center" : "px-5 gap-3"
       )}>
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-200">
           <Store size={24} />
@@ -138,7 +134,7 @@ const SidebarContent = ({
                 >
                   <CollapsibleTrigger
                     className={cn(
-                      "w-full flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-200 group relative outline-none",
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative outline-none",
                       isActive ? "bg-slate-900 text-white shadow-xl shadow-slate-200" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                     )}
                   >
@@ -154,7 +150,7 @@ const SidebarContent = ({
                           key={sub.name}
                           href={sub.href}
                           className={cn(
-                            "flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm font-bold transition-all",
+                            "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-bold transition-all",
                             isSubActive ? "text-slate-900 bg-slate-50" : "text-slate-400 hover:text-slate-900"
                           )}
                         >
@@ -175,7 +171,7 @@ const SidebarContent = ({
                 className={cn(
                   "w-full flex items-center gap-3 rounded-xl transition-all duration-200 group",
                   isActive ? "bg-slate-900 text-white shadow-xl shadow-slate-200" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
-                  isCollapsed ? "justify-center p-3" : "px-5 py-3"
+                  isCollapsed ? "justify-center p-3" : "px-4 py-3"
                 )}
               >
                 <item.icon size={isCollapsed ? 22 : 20} className={cn("shrink-0", !isActive && "group-hover:scale-110 transition-transform")} />
@@ -274,7 +270,7 @@ export default function Sidebar() {
 
       {/* Sidebar Desktop */}
       <motion.aside
-        animate={{ width: isCollapsed ? 80 : 280 }}
+        animate={{ width: isCollapsed ? 72 : 240 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
         className="hidden h-screen border-r border-slate-200/60 bg-white md:block overflow-hidden shadow-[10px_0_40px_-15px_rgba(0,0,0,0.05)] shrink-0"
       >
@@ -289,7 +285,7 @@ export default function Sidebar() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-slate-200/60 bg-white shadow-2xl md:hidden"
+            className="fixed left-0 top-0 z-50 h-screen w-[240px] border-r border-slate-200/60 bg-white shadow-2xl md:hidden"
           >
             <button 
               onClick={() => setIsMobileOpen(false)}

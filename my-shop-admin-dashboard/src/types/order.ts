@@ -10,4 +10,6 @@ export interface Order {
   payment: PaymentStatus;
   items: number;
   date: string;
+  shippingAddress?: string;
+  trackingNumber?: string;
 }

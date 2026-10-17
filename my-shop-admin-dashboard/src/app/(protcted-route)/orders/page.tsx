@@ -1,40 +1,87 @@
 "use client";
 
-import OrderDetailsSheet from "@/components/shared/OrderDetailsSheet";
 import CreateOrderModal from "@/components/shared/CreateOrderModal";
+import EditOrderModal from "@/components/shared/EditOrderModal";
+import ReturnOrderModal from "@/components/shared/ReturnOrderModal";
+import OrderDetailsSheet from "@/components/shared/OrderDetailsSheet";
 import ReUseblePagination from "@/components/shared/Pagination";
 import ReUsebleTable from "@/components/shared/ReUsebleTable";
 import StatsCards from "@/components/shared/StatsCards";
 import { Button } from "@/components/ui/button";
 import ordersData from "@/data/orders.json";
 import { cn } from "@/lib/utils";
-import { Order } from "@/types/order";
 import { OrderFormValues } from "@/lib/validations/order";
-import { toast } from "sonner";
+import { Order } from "@/types/order";
 import {
   CheckCircle2,
   Clock,
   Download,
   Eye,
+  Edit,
+  RotateCcw,
   ShoppingBag,
   Upload,
   XCircle,
 } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 const data = ordersData as unknown as Order[];
 
 export default function OrdersPage() {
+  const [orders, setOrders] = React.useState<Order[]>(
+    ordersData as unknown as Order[],
+  );
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = React.useState(false);
 
   const handleCreateOrder = (values: OrderFormValues) => {
-    // In a real app, you would call an API here
-    console.log("Creating order:", values);
+    const newOrder: Order = {
+      id: `ORD-${Math.floor(Math.random() * 10000)}`,
+      customer: values.customerName,
+      email: values.email,
+      total: values.total,
+      status: "Processing",
+      payment: "Paid",
+      date: new Date().toISOString(),
+      items: values.items.length,
+    };
+    setOrders([newOrder, ...orders]);
+    setIsCreateModalOpen(false);
     toast.success("Order created successfully!");
   };
+
+  const handleStatusUpdate = (id: string, status: string) => {
+    setOrders((prev) =>
+      prev.map((order) => (order.id === id ? { ...order, status } : order)),
+    );
+    toast.success(`Order #${id} status updated to ${status}`);
+    setIsSheetOpen(false);
+  };
+
+  const handleEditOrder = (id: string, values: any) => {
+    setOrders((prev) => 
+      prev.map((order) => order.id === id ? { ...order, ...values } : order)
+    );
+    toast.success(`Order #${id} updated successfully!`);
+    setIsEditModalOpen(false);
+    setSelectedOrder(null);
+  };
+
+  const handleReturnOrder = (id: string, reason: string, status: string) => {
+    setOrders((prev) => 
+      prev.map((order) => order.id === id ? { ...order, status, returnReason: reason } : order)
+    );
+    toast.success(`Order #${id} marked as ${status}`);
+    setIsReturnModalOpen(false);
+    setSelectedOrder(null);
+  };
+
+  // ... columns and actions remain the same, just use orders state
 
   const columns = [
     {
@@ -114,7 +161,7 @@ export default function OrdersPage() {
   ];
 
   const actions = (order: Order) => (
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-end gap-1">
       <Button
         variant="ghost"
         size="icon"
@@ -126,26 +173,45 @@ export default function OrdersPage() {
       >
         <Eye size={16} />
       </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg"
+        onClick={() => {
+          setSelectedOrder(order);
+          setIsEditModalOpen(true);
+        }}
+      >
+        <Edit size={16} />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-slate-400 hover:text-amber-600 rounded-lg"
+        title="Mark as Returned"
+        onClick={() => {
+          setSelectedOrder(order);
+          setIsReturnModalOpen(true);
+        }}
+      >
+        <RotateCcw size={16} />
+      </Button>
     </div>
   );
 
   // Calculations
-  const totalRevenue = ordersData.reduce(
+  const totalRevenue = orders.reduce(
     (acc, order) => acc + (order.status !== "Cancelled" ? order.total : 0),
     0,
   );
-  const pendingOrders = ordersData.filter(
+  const pendingOrders = orders.filter(
     (o) => o.status === "Pending" || o.status === "Processing",
   ).length;
-  const pendingAmount = ordersData
+  const pendingAmount = orders
     .filter((o) => o.status === "Pending" || o.status === "Processing")
     .reduce((acc, order) => acc + order.total, 0);
-  const completedOrders = ordersData.filter(
-    (o) => o.status === "Delivered",
-  ).length;
-  const cancelledOrders = ordersData.filter(
-    (o) => o.status === "Cancelled",
-  ).length;
+  const completedOrders = orders.filter((o) => o.status === "Delivered").length;
+  const cancelledOrders = orders.filter((o) => o.status === "Cancelled").length;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -171,7 +237,7 @@ export default function OrdersPage() {
           >
             <Upload size={18} className="mr-2" /> Import Orders
           </Button>
-          <Button 
+          <Button
             className="rounded-sm font-bold px-6 shadow-sm cursor-pointer"
             onClick={() => setIsCreateModalOpen(true)}
           >
@@ -191,7 +257,7 @@ export default function OrdersPage() {
             color: "text-blue-500",
             bg: "bg-blue-50",
             accent: "bg-blue-500",
-            sub: `${ordersData.length} Total Orders`,
+            sub: `${orders.length} Total Orders`,
           },
           {
             label: "Pending",
@@ -227,11 +293,7 @@ export default function OrdersPage() {
       />
 
       <div className="space-y-0 shadow-none border border-slate-100 rounded-none overflow-hidden">
-        <ReUsebleTable
-          data={data}
-          columns={columns}
-          actions={actions}
-        />
+        <ReUsebleTable data={orders} columns={columns} actions={actions} />
         <ReUseblePagination
           currentPage={currentPage}
           totalPages={5}
@@ -243,12 +305,27 @@ export default function OrdersPage() {
         order={selectedOrder}
         isOpen={isSheetOpen}
         onOpenChange={setIsSheetOpen}
+        onStatusUpdate={handleStatusUpdate}
       />
 
-      <CreateOrderModal 
+      <CreateOrderModal
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
         onSubmit={handleCreateOrder}
+      />
+
+      <EditOrderModal 
+        order={selectedOrder}
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSubmit={handleEditOrder}
+      />
+
+      <ReturnOrderModal 
+        order={selectedOrder}
+        isOpen={isReturnModalOpen}
+        onOpenChange={setIsReturnModalOpen}
+        onSubmit={handleReturnOrder}
       />
     </div>
   );

@@ -107,10 +107,10 @@
     color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden;
   }
   html {
-    @apply font-sans;
+    @apply font-sans overflow-hidden h-full;
   }
 }
 
