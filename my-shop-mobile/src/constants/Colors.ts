@@ -1,0 +1,15 @@
+export const AppColors = {
+  primary: "#F97316",
+  primaryDark: "#C2410C",
+  primaryLight: "#FFF7ED",
+  text: "#17212B",
+  secondaryText: "#64748B",
+  white: "#FFFFFF",
+  background: "#F7F8FA",
+  border: "#E7EBEF",
+  success: "#15803D",
+  successLight: "#F0FDF4",
+  error: "#B91C1C",
+  errorLight: "#FEF2F2",
+  overlay: "rgba(15, 23, 42, 0.48)",
+} as const;
