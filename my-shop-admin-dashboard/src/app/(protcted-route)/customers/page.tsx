@@ -7,18 +7,22 @@ import { cn } from "@/lib/utils";
 import { getFakeData } from "@/lib/data";
 import ReUsebleTable from "@/components/shared/ReUsebleTable";
 import ReUseblePagination from "@/components/shared/Pagination";
-import { Customer } from "@/types/customer";
+import CustomerDetailsSheet from "@/components/shared/CustomerDetailsSheet";
 
 const data = getFakeData();
 
 export default function CustomersPage() {
+  const data = getFakeData();
+  const [customers, setCustomers] = React.useState(data.customers);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [selectedCustomer, setSelectedCustomer] = React.useState<any>(null);
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const columns = [
     {
       header: "Customer",
       accessorKey: "name",
-      cell: (customer: Customer) => (
+      cell: (customer: any) => (
         <div className="flex items-center gap-3">
           <div className={cn(
             "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shadow-sm",
@@ -36,7 +40,7 @@ export default function CustomersPage() {
     {
       header: "Status",
       accessorKey: "status",
-      cell: (customer: Customer) => (
+      cell: (customer: any) => (
         <span className={cn(
           "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
           customer.status === "Active" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-slate-100 text-slate-600 border border-slate-200"
@@ -48,20 +52,20 @@ export default function CustomersPage() {
     {
       header: "Orders",
       accessorKey: "orders",
-      cell: (customer: Customer) => (
+      cell: (customer: any) => (
         <span className="text-sm font-medium text-slate-600">{customer.orders} orders</span>
       ),
     },
     {
       header: "Total Spent",
       accessorKey: "spent",
-      cell: (customer: Customer) => (
+      cell: (customer: any) => (
         <span className="text-sm font-black text-slate-900">{customer.spent}</span>
       ),
     },
   ];
 
-  const actions = () => (
+  const actions = (customer: any) => (
     <div className="flex items-center justify-end gap-1">
       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
         <Mail size={16} />
@@ -69,7 +73,15 @@ export default function CustomersPage() {
       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
         <Phone size={16} />
       </Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg"
+        onClick={() => {
+          setSelectedCustomer(customer);
+          setIsSheetOpen(true);
+        }}
+      >
         <Eye size={16} />
       </Button>
     </div>
@@ -89,7 +101,7 @@ export default function CustomersPage() {
 
       <div className="space-y-0 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
         <ReUsebleTable
-          data={data.customers}
+          data={customers}
           columns={columns}
           actions={actions}
           searchPlaceholder="Search by name, email, or status..."
@@ -100,6 +112,12 @@ export default function CustomersPage() {
           onPageChange={setCurrentPage}
         />
       </div>
+
+      <CustomerDetailsSheet 
+        customer={selectedCustomer}
+        isOpen={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
     </div>
   );
 }

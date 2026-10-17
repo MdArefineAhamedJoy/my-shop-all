@@ -11,7 +11,28 @@ import ReUseableModal from "@/components/shared/ReUseableModal";
 const data = getFakeData();
 
 export default function CategoriesPage() {
+  const data = getFakeData();
+  const [categories, setCategories] = React.useState(data.categories);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [newCategory, setNewCategory] = React.useState({ name: "", slug: "" });
+
+  const handleAddCategory = () => {
+    if (newCategory.name) {
+      const category = {
+        id: `CAT-00${categories.length + 1}`,
+        name: newCategory.name,
+        products: 0,
+        status: "Active"
+      };
+      setCategories([...categories, category]);
+      setIsModalOpen(false);
+      setNewCategory({ name: "", slug: "" });
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    setCategories(categories.filter(c => c.id !== id));
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -30,7 +51,7 @@ export default function CategoriesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.categories.map((category) => (
+        {categories.map((category) => (
           <Card key={category.id} className="border-none shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="p-2.5 bg-slate-100 text-slate-900 rounded-xl group-hover:bg-slate-900 group-hover:text-white transition-colors">
@@ -40,7 +61,12 @@ export default function CategoriesPage() {
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 rounded-lg">
                   <Edit size={16} />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600 rounded-lg">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 text-slate-400 hover:text-red-600 rounded-lg"
+                  onClick={() => handleDelete(category.id)}
+                >
                   <Trash2 size={16} />
                 </Button>
               </div>
@@ -63,7 +89,7 @@ export default function CategoriesPage() {
         
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-slate-900 hover:border-slate-900/20 hover:bg-slate-50 transition-all group"
+          className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-slate-900 hover:border-slate-900/20 hover:bg-slate-50 transition-all group min-h-[160px]"
         >
           <div className="p-3 bg-slate-50 rounded-full group-hover:scale-110 transition-transform">
             <Plus size={24} />
@@ -72,7 +98,6 @@ export default function CategoriesPage() {
         </button>
       </div>
 
-      {/* Reusable Modal Example */}
       <ReUseableModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -84,7 +109,7 @@ export default function CategoriesPage() {
             <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold text-slate-500">
               Cancel
             </Button>
-            <Button variant="premium" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold px-6">
+            <Button variant="premium" onClick={handleAddCategory} className="rounded-xl font-bold px-6">
               <Save size={16} className="mr-2" /> Save Category
             </Button>
           </>
@@ -95,6 +120,8 @@ export default function CategoriesPage() {
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Category Name</label>
             <input
               type="text"
+              value={newCategory.name}
+              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
               placeholder="e.g. Winter Collection"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all font-medium"
             />
@@ -103,6 +130,8 @@ export default function CategoriesPage() {
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Slug (Optional)</label>
             <input
               type="text"
+              value={newCategory.slug}
+              onChange={(e) => setNewCategory({ ...newCategory, slug: e.target.value })}
               placeholder="e.g. winter-collection"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all font-medium"
             />

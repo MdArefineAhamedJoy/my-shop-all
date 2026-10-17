@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,8 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
     colors: [],
     stock: 0,
     sku: "",
+    isFeatured: false,
+    isNew: false,
   });
 
   const [newTag, setNewTag] = useState("");
@@ -91,10 +94,10 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
     value: string,
     setter: (val: string) => void,
   ) => {
-    if (value && !formData[field].includes(value)) {
+    if (value && !(formData[field] ?? []).includes(value)) {
       setFormData((prev) => ({
         ...prev,
-        [field]: [...prev[field], value],
+        [field]: [...(prev[field] ?? []), value],
       }));
       setter("");
     }
@@ -103,7 +106,7 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
   const removeItem = (field: "tags" | "sizes" | "colors", value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].filter((item) => item !== value),
+      [field]: (prev[field] ?? []).filter((item) => item !== value),
     }));
   };
 
@@ -257,7 +260,7 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.sizes.map((size) => (
+                      {(formData.sizes ?? []).map((size) => (
                         <Badge
                           key={size}
                           variant="secondary"
@@ -301,7 +304,7 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.colors.map((color) => (
+                      {(formData.colors ?? []).map((color) => (
                         <Badge
                           key={color}
                           variant="secondary"
@@ -323,30 +326,47 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                   <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Images
                   </Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button type="button" className="aspect-square border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 hover:border-slate-300 hover:bg-white transition-all group">
-                      <Plus size={18} />
-                      <span className="text-[8px] font-semibold uppercase tracking-wider">Upload</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const url = prompt("Enter image URL:");
+                        if (url) {
+                          setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
+                        }
+                      }}
+                      className="aspect-square border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-slate-900 hover:border-slate-900/20 hover:bg-slate-50 transition-all group"
+                    >
+                      <Plus size={20} />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Add Image</span>
                     </button>
-                    {/* Mock Image */}
-                    <div className="relative aspect-square rounded-xl overflow-hidden group border border-slate-100 shadow-sm">
-                      <Image
-                        src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=200&h=200&fit=crop"
-                        alt="Product preview"
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 bg-red-500 text-white hover:bg-red-600 border-none"
-                        >
-                          <Trash2 size={14} />
-                        </Button>
+                    
+                    {(formData.images ?? []).map((img, idx) => (
+                      <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-slate-100 shadow-sm">
+                        <Image
+                          src={img}
+                          alt={`Product preview ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 bg-red-500 text-white hover:bg-red-600 border-none rounded-lg"
+                            onClick={() => {
+                              setFormData(prev => ({
+                                ...prev,
+                                images: prev.images.filter((_, i) => i !== idx)
+                              }));
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -376,10 +396,11 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mens-fashion">Mens Fashion</SelectItem>
-                    <SelectItem value="womens-fashion">Womens Fashion</SelectItem>
+                    <SelectItem value="shirt">Shirts</SelectItem>
+                    <SelectItem value="pants">Pants</SelectItem>
+                    <SelectItem value="t-shirt">T-Shirts</SelectItem>
+                    <SelectItem value="polo">Polo Shirts</SelectItem>
                     <SelectItem value="accessories">Accessories</SelectItem>
-                    <SelectItem value="footwear">Footwear</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -411,7 +432,7 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {formData.tags.map((tag) => (
+                  {(formData.tags ?? []).map((tag) => (
                     <Badge
                       key={tag}
                       className="bg-slate-800 text-white text-[10px] font-semibold rounded-lg uppercase tracking-wider gap-1"
@@ -424,6 +445,51 @@ export default function ProductForm({ onSuccess, onCancel }: ProductFormProps) {
                       />
                     </Badge>
                   ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-none bg-slate-50/50">
+            <CardHeader className="px-4 py-4">
+              <CardTitle className="text-base">Visibility & Status</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 px-4 pb-4">
+              <div className="flex items-center space-x-3">
+                <Checkbox 
+                  id="isFeatured" 
+                  checked={formData.isFeatured}
+                  onCheckedChange={(checked) => 
+                    setFormData(prev => ({ ...prev, isFeatured: !!checked }))
+                  }
+                  className="rounded-md border-slate-200"
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <Label htmlFor="isFeatured" className="text-sm font-bold text-slate-900 cursor-pointer">
+                    Featured Product
+                  </Label>
+                  <p className="text-[10px] text-slate-400 font-medium">
+                    Show this product in the homepage featured section.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <Checkbox 
+                  id="isNew" 
+                  checked={formData.isNew}
+                  onCheckedChange={(checked) => 
+                    setFormData(prev => ({ ...prev, isNew: !!checked }))
+                  }
+                  className="rounded-md border-slate-200"
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <Label htmlFor="isNew" className="text-sm font-bold text-slate-900 cursor-pointer">
+                    New Arrival
+                  </Label>
+                  <p className="text-[10px] text-slate-400 font-medium">
+                    Mark this product as a new arrival.
+                  </p>
                 </div>
               </div>
             </CardContent>

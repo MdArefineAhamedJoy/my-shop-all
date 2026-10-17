@@ -162,6 +162,29 @@ export default function MyDashboard() {
 
           <Card className="border-none shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base">Top Selling Products</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.products.slice(0, 3).map((product, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                    <ShoppingBag size={18} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-slate-900 truncate max-w-[120px]">{product.name}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{product.price} TK</span>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <p className="text-xs font-black text-slate-900">{120 - (idx * 15)}</p>
+                    <p className="text-[8px] font-bold text-slate-400 uppercase">Sales</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base">Recent Customers</CardTitle>
               <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
                 <MoreVertical size={16} />

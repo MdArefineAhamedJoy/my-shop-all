@@ -15,6 +15,8 @@ export interface Product {
   stock: number;
   sku: string;
   video?: string;
+  isFeatured: boolean;
+  isNew: boolean;
 }
 
 export type CreateProductRequest = Omit<Product, 'id'>;

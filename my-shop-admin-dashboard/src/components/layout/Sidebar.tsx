@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   X,
   LogOut,
-  Store
+  Store,
+  XCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -34,18 +35,13 @@ import Image from "next/image";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  {
-    name: "Products",
-    href: "/products",
-    icon: ShoppingBag,
-    submenu: [
-      { name: "All Products", href: "/products", icon: Package },
-      { name: "Add New", href: "/products/new", icon: PlusCircle },
-    ],
-  },
+  { name: "Products", href: "/products", icon: ShoppingBag },
   { name: "Categories", href: "/categories", icon: Layers },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
+  { name: "Invoices", href: "/invoices", icon: Layers },
+  { name: "Returns", href: "/returns", icon: XCircle },
   { name: "Customers", href: "/customers", icon: Users },
+  { name: "Storefront", href: "/storefront", icon: Store },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
