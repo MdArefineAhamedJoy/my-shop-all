@@ -27,54 +27,60 @@ const methods: {
     icon: "phone-portrait-outline",
   },
   {
-    id: "card",
-    title: "Credit or debit card",
-    description: "Visa, Mastercard and more",
+    id: "sslcommerz",
+    title: "Card / bKash / Nagad",
+    description: "Continue to the secure payment provider",
     icon: "card-outline",
   },
 ];
 export function PaymentOptions({
   selected,
   onSelect,
+  enabled = ["cod"],
 }: {
   selected: string;
   onSelect: (value: string) => void;
+  enabled?: string[];
 }) {
   return (
     <View style={styles.options}>
-      {methods.map((method) => (
-        <Pressable
-          key={method.id}
-          accessibilityRole="radio"
-          accessibilityState={{ checked: selected === method.id }}
-          onPress={() => onSelect(method.id)}
-          style={[styles.option, selected === method.id && styles.selected]}
-        >
-          <View style={styles.icon}>
+      {methods
+        .filter((method) => enabled.includes(method.id))
+        .map((method) => (
+          <Pressable
+            key={method.id}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected === method.id }}
+            onPress={() => onSelect(method.id)}
+            style={[styles.option, selected === method.id && styles.selected]}
+          >
+            <View style={styles.icon}>
+              <Icon
+                name={method.icon}
+                color={
+                  selected === method.id
+                    ? AppColors.primaryDark
+                    : AppColors.secondaryText
+                }
+              />
+            </View>
+            <View style={styles.copy}>
+              <Text style={styles.title}>{method.title}</Text>
+              <Text style={styles.subtitle}>{method.description}</Text>
+            </View>
             <Icon
-              name={method.icon}
+              name={
+                selected === method.id ? "radio-button-on" : "radio-button-off"
+              }
+              size={21}
               color={
                 selected === method.id
                   ? AppColors.primaryDark
-                  : AppColors.secondaryText
+                  : AppColors.border
               }
             />
-          </View>
-          <View style={styles.copy}>
-            <Text style={styles.title}>{method.title}</Text>
-            <Text style={styles.subtitle}>{method.description}</Text>
-          </View>
-          <Icon
-            name={
-              selected === method.id ? "radio-button-on" : "radio-button-off"
-            }
-            size={21}
-            color={
-              selected === method.id ? AppColors.primaryDark : AppColors.border
-            }
-          />
-        </Pressable>
-      ))}
+          </Pressable>
+        ))}
     </View>
   );
 }

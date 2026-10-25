@@ -19,9 +19,7 @@ export default function AccountScreen() {
     mutationFn: signOut,
     onSuccess: () => setConfirm(false),
   });
-  const orders = state.orders.filter(
-    (order) => order.address.email.toLowerCase() === user?.email.toLowerCase()
-  );
+  const orders = state.orders;
   return (
     <Screen safeBottom={false}>
       <View style={styles.container}>
@@ -49,7 +47,7 @@ export default function AccountScreen() {
           </Text>
           {user ? (
             <View style={styles.preview}>
-              <Text style={styles.previewText}>Preview account</Text>
+              <Text style={styles.previewText}>Customer account</Text>
             </View>
           ) : (
             <View style={styles.authActions}>
@@ -70,7 +68,7 @@ export default function AccountScreen() {
           <View style={styles.divider} />
           <View style={styles.stat}>
             <Text style={styles.statValue}>{orders.length}</Text>
-            <Text style={styles.statLabel}>Preview orders</Text>
+            <Text style={styles.statLabel}>Orders</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.stat}>
@@ -135,8 +133,8 @@ export default function AccountScreen() {
         }
       >
         <Text style={styles.confirmText}>
-          Your shopping bag and favorites will stay on this device. You can sign
-          in to your preview space again anytime.
+          Your shopping bag and favorites are saved with your account. Sign in
+          again to access them.
         </Text>
         {logout.error && <Notice tone="error">{logout.error.message}</Notice>}
       </BottomSheet>

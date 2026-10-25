@@ -5,15 +5,40 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 import { IoEye, IoEyeOff, IoSparklesOutline } from "react-icons/io5";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const router = useRouter();
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    const values = new FormData(e.currentTarget);
+    try {
+      await api("auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          name: `${values.get("firstName")} ${values.get("lastName")}`.trim(),
+          email: values.get("email"),
+          password: values.get("password"),
+        }),
+      });
+      router.replace("/account");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Registration failed",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="min-h-screen h-dvh bg-white flex flex-col lg:flex-row-reverse overflow-hidden">
-
       {/* ══════════════════════════════
           Visual Side — Desktop only
       ══════════════════════════════ */}
@@ -38,13 +63,18 @@ const SignupPage = () => {
             Join The Circle
           </span>
           <h1 className="text-5xl font-black italic leading-[1.1] mb-4">
-            A new era of<br />personal style.
+            A new era of
+            <br />
+            personal style.
           </h1>
           <p className="text-gray-300 text-sm leading-relaxed ml-auto max-w-xs">
-            Save your favorite pieces, get personalized recommendations, and enjoy early access to exclusive drops.
+            Save your favorite pieces, get personalized recommendations, and
+            enjoy early access to exclusive drops.
           </p>
           <div className="flex items-center justify-end gap-3 mt-8">
-            <span className="text-[10px] tracking-[0.4em] text-white/40 uppercase font-bold">Privacy First</span>
+            <span className="text-[10px] tracking-[0.4em] text-white/40 uppercase font-bold">
+              Privacy First
+            </span>
             <div className="w-10 h-px bg-white/30" />
           </div>
         </motion.div>
@@ -54,7 +84,6 @@ const SignupPage = () => {
           Form Side
       ══════════════════════════════ */}
       <div className="flex-1 flex flex-col overflow-y-auto bg-white">
-
         {/* Mobile Hero */}
         <div className="lg:hidden relative h-48 w-full flex-shrink-0 bg-[#111]">
           <Image
@@ -67,7 +96,9 @@ const SignupPage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
           <div className="absolute top-4 left-4 z-10">
-            <span className="text-xl font-black text-white">MY<span className="text-orange-500">SHOP</span></span>
+            <span className="text-xl font-black text-white">
+              MY<span className="text-orange-500">SHOP</span>
+            </span>
           </div>
         </div>
 
@@ -85,7 +116,6 @@ const SignupPage = () => {
         {/* Form */}
         <div className="flex-1 flex items-center justify-center px-6 sm:px-10 lg:px-16 py-6">
           <div className="w-full max-w-[420px]">
-
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -95,7 +125,9 @@ const SignupPage = () => {
             >
               <div className="hidden lg:flex items-center gap-2 mb-4">
                 <div className="w-1 h-6 bg-orange-500" />
-                <span className="text-xl font-black">MY<span className="text-orange-500">SHOP</span></span>
+                <span className="text-xl font-black">
+                  MY<span className="text-orange-500">SHOP</span>
+                </span>
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <IoSparklesOutline className="text-orange-500" size={16} />
@@ -116,7 +148,7 @@ const SignupPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="space-y-4"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={submit}
             >
               {/* Name Row */}
               <div className="grid grid-cols-2 gap-3">
@@ -127,6 +159,9 @@ const SignupPage = () => {
                   <input
                     type="text"
                     placeholder="John"
+                    name="firstName"
+                    required
+                    autoComplete="given-name"
                     className="w-full px-4 py-4 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                   />
                 </div>
@@ -137,6 +172,8 @@ const SignupPage = () => {
                   <input
                     type="text"
                     placeholder="Doe"
+                    name="lastName"
+                    autoComplete="family-name"
                     className="w-full px-4 py-4 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                   />
                 </div>
@@ -149,6 +186,9 @@ const SignupPage = () => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
                   placeholder="Enter your email address"
                   className="w-full px-4 py-4 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                 />
@@ -163,6 +203,11 @@ const SignupPage = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a strong password"
+                    name="password"
+                    required
+                    minLength={12}
+                    maxLength={128}
+                    autoComplete="new-password"
                     className="w-full px-4 py-4 pr-12 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                   />
                   <button
@@ -171,7 +216,11 @@ const SignupPage = () => {
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                     aria-label="Toggle password visibility"
                   >
-                    {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+                    {showPassword ? (
+                      <IoEyeOff size={20} />
+                    ) : (
+                      <IoEye size={20} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -179,14 +228,20 @@ const SignupPage = () => {
               {/* Terms */}
               <p className="text-[11px] text-gray-400 leading-relaxed bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
                 By creating an account, you agree to our{" "}
-                <span className="text-black font-bold underline cursor-pointer">Terms of Service</span>{" "}
+                <span className="text-black font-bold underline cursor-pointer">
+                  Terms of Service
+                </span>{" "}
                 and{" "}
-                <span className="text-black font-bold underline cursor-pointer">Privacy Policy</span>.
+                <span className="text-black font-bold underline cursor-pointer">
+                  Privacy Policy
+                </span>
+                .
               </p>
 
               {/* Submit */}
               <button
                 type="submit"
+                disabled={busy}
                 className="w-full py-4 bg-black text-white text-xs font-black uppercase tracking-[0.25em] rounded-xl hover:bg-orange-500 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-black/15"
               >
                 Get Started →
@@ -203,18 +258,6 @@ const SignupPage = () => {
                   Or sign up with
                 </span>
               </div>
-            </div>
-
-            {/* Social Buttons */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              <button className="flex items-center justify-center gap-2.5 py-3.5 border-2 border-[#e8e8e8] rounded-xl text-xs font-black uppercase tracking-wider text-[#111] hover:border-black hover:bg-[#f5f5f5] transition-all duration-200">
-                <FcGoogle size={19} />
-                Google
-              </button>
-              <button className="flex items-center justify-center gap-2.5 py-3.5 border-2 border-[#e8e8e8] rounded-xl text-xs font-black uppercase tracking-wider text-[#111] hover:border-black hover:bg-[#f5f5f5] transition-all duration-200">
-                <FaFacebook size={19} className="text-[#1877F2]" />
-                Facebook
-              </button>
             </div>
 
             {/* Switch */}

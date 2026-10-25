@@ -11,7 +11,7 @@ export function totals(cart: CartItem[]) {
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
-  const tax = Math.round(subtotal * 0.1 * 100) / 100;
+  const tax = 0; // The checkout quote supplies the actual tax and delivery charges.
   return { subtotal, tax, total: subtotal + tax };
 }
 export function filterProducts(products: Product[], f: Filters): Product[] {

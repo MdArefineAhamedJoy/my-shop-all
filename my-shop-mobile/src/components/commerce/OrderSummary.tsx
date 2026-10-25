@@ -24,14 +24,45 @@ export function SummaryRow({
 export function OrderSummary({
   items,
   children,
-}: PropsWithChildren<{ items: CartItem[] }>) {
-  const { subtotal, tax, total } = totals(items);
+  serverTotals,
+}: PropsWithChildren<{
+  items: CartItem[];
+  serverTotals?: {
+    subtotalMinor: number;
+    discountMinor: number;
+    shippingMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+  };
+}>) {
+  const local = totals(items);
+  const subtotal = serverTotals
+      ? serverTotals.subtotalMinor / 100
+      : local.subtotal,
+    tax = serverTotals ? serverTotals.taxMinor / 100 : 0,
+    total = serverTotals ? serverTotals.totalMinor / 100 : local.total;
   return (
     <View style={styles.panel}>
       <Text style={styles.heading}>Order summary</Text>
       <SummaryRow label="Subtotal" value={money(subtotal)} />
-      <SummaryRow label="Estimated tax (10%)" value={money(tax)} />
-      <SummaryRow label="Shipping" value="Free" />
+      <SummaryRow
+        label="Tax"
+        value={serverTotals ? money(tax) : "Calculated at checkout"}
+      />
+      <SummaryRow
+        label="Shipping"
+        value={
+          serverTotals
+            ? money(serverTotals.shippingMinor / 100)
+            : "Calculated at checkout"
+        }
+      />
+      {!!serverTotals?.discountMinor && (
+        <SummaryRow
+          label="Discount"
+          value={money(-serverTotals.discountMinor / 100)}
+        />
+      )}
       <View style={styles.rule} />
       <SummaryRow label="Total" value={money(total)} bold />
       {children}

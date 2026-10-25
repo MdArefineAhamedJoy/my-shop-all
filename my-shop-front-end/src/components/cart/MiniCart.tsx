@@ -69,9 +69,10 @@ const MiniCart: React.FC = () => {
     productId: string,
     size: string,
     newQuantity: number,
+    color?: string,
   ) => {
     if (newQuantity < 1) return;
-    updateCartQuantity(productId, size, newQuantity);
+    updateCartQuantity(productId, size, newQuantity, color);
   };
 
   if (pathname === "/checkout") return null;
@@ -275,6 +276,7 @@ const MiniCart: React.FC = () => {
                                   item.product.id,
                                   item.selectedSize,
                                   item.quantity - 1,
+                                  item.selectedColor,
                                 )
                               }
                               className="w-6 h-6 flex items-center justify-center hover:bg-white hover:text-orange-600 hover:shadow-sm rounded transition-all text-orange-600 cursor-pointer"
@@ -291,6 +293,7 @@ const MiniCart: React.FC = () => {
                                   item.product.id,
                                   item.selectedSize,
                                   item.quantity + 1,
+                                  item.selectedColor,
                                 )
                               }
                               className="w-6 h-6 flex items-center justify-center hover:bg-white hover:text-orange-600 hover:shadow-sm rounded transition-all text-orange-600 cursor-pointer"
@@ -301,7 +304,11 @@ const MiniCart: React.FC = () => {
 
                           <button
                             onClick={() =>
-                              removeFromCart(item.product.id, item.selectedSize)
+                              removeFromCart(
+                                item.product.id,
+                                item.selectedSize,
+                                item.selectedColor,
+                              )
                             }
                             className="flex items-center gap-1 px-2.5 py-1.5 bg-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-500 rounded-md text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 cursor-pointer"
                           >

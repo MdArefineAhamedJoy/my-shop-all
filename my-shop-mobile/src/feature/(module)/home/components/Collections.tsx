@@ -5,10 +5,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Text } from "@/components/ui";
 import { imageSource } from "@/data/images";
-import { collections } from "@/data/storefront";
+import { collections as defaultCollections } from "@/data/storefront";
+import { useCollections } from "@/hooks/useStorefront";
 import { useResponsive } from "@/hooks/useResponsive";
 
 export function Collections() {
+  const { data = [] } = useCollections();
+  const collections = data.map((c) => ({
+    ...c,
+    image: defaultCollections[0].image,
+    subtitle: "Explore the collection",
+    tag: "",
+  }));
   const { isWide } = useResponsive();
   return (
     <View style={styles.section}>
@@ -28,7 +36,12 @@ export function Collections() {
               onPress={() =>
                 router.push({
                   pathname: "/shop",
-                  params: { tag: collection.tag, gender: "", category: "" },
+                  params: {
+                    collectionId: collection.id,
+                    tag: collection.tag,
+                    gender: "",
+                    category: "",
+                  },
                 })
               }
               style={styles.card}

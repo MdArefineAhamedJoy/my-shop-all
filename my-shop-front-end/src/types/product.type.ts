@@ -1,4 +1,5 @@
 export interface Product {
+  variants?: import("@/lib/api").ApiVariant[];
   id: string;
   name: string;
   slug: string;

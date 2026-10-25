@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+coverage/
+storage/
+.test-postgres/
+test-results/
+*.log
+.local-admin-setup.txt
+.local-demo-accounts.json

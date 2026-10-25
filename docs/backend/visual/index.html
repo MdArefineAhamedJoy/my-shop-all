@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore MyShop's proposed backend, database relationships, foreign keys, indexes and architecture diagrams.">
+  <title>MyShop — Architecture Atlas</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to diagram</a>
+  <aside class="sidebar" aria-label="Architecture navigation">
+    <a class="brand" href="#schema"><span class="brand-icon">m<span>↗</span></span><span>myshop<span class="brand-caption">ENGINEERING ATLAS</span></span></a>
+    <div class="project-label"><span class="live-dot"></span> BACKEND SYSTEM DESIGN <span>v1.0</span></div>
+    <nav class="main-nav" aria-label="Views">
+      <button data-view="schema" class="nav-item active"><span>⌘</span> Database explorer <small id="nav-table-count"></small></button>
+      <button data-view="relations" class="nav-item"><span>⇄</span> Foreign keys</button>
+      <button data-view="optimization" class="nav-item"><span>↗</span> Optimization</button>
+      <button data-view="architecture" class="nav-item"><span>▦</span> Architecture diagrams <small>10</small></button>
+      <button data-view="api" class="nav-item"><span>⟷</span> API contracts</button>
+      <button data-view="documents" class="nav-item"><span>▤</span> Full documentation</button>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="section-label">EXPLORE BY DOMAIN</div>
+    <button class="domain-item selected" data-domain="all"><span class="domain-dot all-dot"></span> Complete database <small id="all-count"></small></button>
+    <div id="domain-list"></div>
+    <div class="sidebar-divider"></div>
+    <label class="search-box"><span>⌕</span><input id="table-search" type="search" placeholder="Find a table or column…" aria-label="Find a table or column"><kbd>/</kbd></label>
+    <div id="table-list" class="table-list" aria-label="Tables"></div>
+    <div class="sidebar-footer"><span class="local-icon">◈</span><div>Works entirely offline<small>Design proposal · 21 Oct 2026</small></div></div>
+  </aside>
+  <main id="main">
+    <header class="topbar"><button id="mobile-menu" class="icon-button" aria-label="Toggle navigation">☰</button><div class="breadcrumbs">MyShop <span>/</span> Engineering <span>/</span> <strong id="breadcrumb">Database explorer</strong></div><div class="topbar-actions"><span class="proposal"><i></i> Proposed design</span><button id="print-button" class="quiet-button">Print / PDF ↗</button></div></header>
+    <div class="page-heading"><div><div class="eyebrow">ONE SYSTEM. EVERY CONNECTION.</div><h1 id="page-title">Your database, <em>connected.</em></h1><p id="page-description">টেবিলে ক্লিক করুন—column, primary key, foreign key ও index একসঙ্গে দেখুন।</p></div><a class="download-button" href="schema.json" download>↓ <span>Schema JSON</span></a></div>
+    <section class="stats-strip" aria-label="Schema summary"><div><span id="stat-tables">—</span><small>domain tables</small></div><div><span id="stat-columns">—</span><small>specified columns</small></div><div><span id="stat-fks">—</span><small>foreign key relations</small></div><div><span>8</span><small>bounded domains</small></div><p><span>PostgreSQL</span> UUID keys · BDT minor units · UTC storage</p></section>
+    <section id="view-schema" class="view active" aria-label="Database explorer">
+      <div class="workspace-toolbar"><div class="workspace-heading"><span class="tiny-grid">▦</span><strong id="graph-title">Complete database</strong><span id="graph-count" class="subtle"></span></div><div class="toolbar-actions"><label class="check-label"><input id="all-columns" type="checkbox">All columns</label><button id="clear-focus" class="quiet-button" hidden>All tables</button><button id="export-svg" class="quiet-button">Export SVG ↓</button><button id="fullscreen" class="icon-button" aria-label="Fullscreen diagram">⛶</button></div></div>
+      <div class="explorer-layout">
+        <div class="diagram-wrap"><div id="diagram-canvas" class="diagram-canvas" tabindex="0" aria-label="Interactive database diagram. Drag to pan, use zoom controls, click a table to inspect."><svg id="schema-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MyShop foreign key diagram"><defs><marker id="fk-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="#398b77"/></marker></defs><g id="diagram-transform"></g></svg><div class="canvas-empty" id="graph-empty" hidden>No tables match this search.</div></div><div class="canvas-caption"><span><i class="line-sample"></i> FK → referenced key</span><span><b class="key-pill">PK</b> Primary</span><span><b class="fk-pill">FK</b> Foreign</span><span><b class="uk-pill">UQ</b> Unique</span><span id="canvas-help">Drag to pan · Select a table to focus</span></div><div class="zoom-controls"><button id="zoom-out" aria-label="Zoom out">−</button><span id="zoom-value">100%</span><button id="zoom-in" aria-label="Zoom in">+</button><span class="control-divider"></span><button id="fit-graph" aria-label="Fit diagram">Fit</button></div><div id="overview-hint" class="overview-hint"><strong>The whole system at a glance.</strong><span>Select a domain or a table for a readable close-up.</span><button id="start-orders">Explore orders →</button></div></div>
+        <aside id="inspector" class="inspector" aria-label="Table detail"></aside>
+      </div>
+      <p class="design-note"><strong>Design, not a live database.</strong> The explorer expands the proposed logical dictionary. PK/FK types, nullability and delete policies are design choices. Snapshot and polymorphic references are identified separately.</p>
+    </section>
+    <section id="view-relations" class="view" aria-label="Foreign key catalog"></section>
+    <section id="view-optimization" class="view" aria-label="Database optimization"></section>
+    <section id="view-architecture" class="view" aria-label="Architecture diagrams"></section>
+    <section id="view-api" class="view" aria-label="API contracts"></section>
+    <section id="view-documents" class="view" aria-label="Full documentation"></section>
+    <footer class="page-footer"><span>MYSHOP / ENGINEERING</span><span>One source of truth. Three connected clients.</span><a href="../README.md">Source documentation ↗</a></footer>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

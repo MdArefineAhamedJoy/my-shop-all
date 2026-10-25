@@ -59,7 +59,7 @@ export default function CartScreen() {
                 size={14}
               />
               <Text style={styles.noteText}>
-                Frontend checkout preview. No payment collected.
+                Final shipping and tax are calculated at checkout.
               </Text>
             </View>
           </OrderSummary>

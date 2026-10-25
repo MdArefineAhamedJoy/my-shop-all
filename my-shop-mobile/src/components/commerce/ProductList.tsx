@@ -9,10 +9,12 @@ export function ProductList({
   products,
   header,
   empty,
+  footer,
 }: {
   products: Product[];
   header: ReactElement;
   empty: ReactElement;
+  footer?: ReactElement;
 }) {
   const { contentWidth, columns } = useResponsive();
   const cardWidth = (contentWidth - 40 - (columns - 1) * 14) / columns;
@@ -24,6 +26,7 @@ export function ProductList({
       keyExtractor={(product) => product.id}
       ListHeaderComponent={header}
       ListEmptyComponent={empty}
+      ListFooterComponent={footer}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       style={styles.list}

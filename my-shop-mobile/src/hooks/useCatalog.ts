@@ -3,7 +3,7 @@ import { catalogService } from "@/services/catalogService";
 
 export function useCatalog() {
   return useQuery({
-    queryKey: ["catalog", "preview"],
+    queryKey: ["catalog", "live"],
     queryFn: catalogService.list,
   });
 }

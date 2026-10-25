@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, FormField, Notice, Text } from "@/components/ui";
 import { AppColors } from "@/constants";
 import { useSessionStatus } from "@/hooks/useSessionStatus";
-import { authService, PREVIEW_OTP } from "@/services/authService";
+import { authService } from "@/services/authService";
 import { AuthFormScreen } from "../../components/AuthFormScreen";
 import { AuthFooter } from "../../components/AuthFooter";
 import { useVerifyCode } from "../../hooks/useAuth";
@@ -43,21 +43,24 @@ export default function OtpVerification() {
   if (!challenge) return <Redirect href="/forgot-password" />;
   return (
     <AuthFormScreen
-      title="Check your code."
-      subtitle={`Continue with the 6 digit verification code for ${challenge.email}.`}
+      title="Check your email."
+      subtitle={`Paste the reset token sent to ${challenge.email}.`}
       icon="mail-open-outline"
     >
       <View style={styles.notice}>
-        <Notice>{`Preview code: ${PREVIEW_OTP}. No email is sent in this frontend preview.`}</Notice>
+        <Notice>
+          Use the one-time token from your reset email. It expires after 30
+          minutes.
+        </Notice>
       </View>
       <FormField
         control={control}
         name="code"
-        label="Verification code"
-        placeholder="000000"
-        keyboardType="number-pad"
-        maxLength={6}
-        autoComplete="one-time-code"
+        label="Reset token"
+        placeholder="Paste your email token"
+        keyboardType="default"
+        maxLength={200}
+        autoComplete="off"
         style={styles.code}
       />
       {(verify.error || resend.error) && (
@@ -68,7 +71,7 @@ export default function OtpVerification() {
         </View>
       )}
       <Button
-        title="Verify code"
+        title="Verify reset token"
         loading={verify.isPending}
         onPress={handleSubmit((values) => verify.mutate(values.code))}
       />

@@ -1,0 +1,5413 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/admin/jobs": {
+      "get": {
+        "operationId": "JobsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Background Jobs"
+        ],
+        "description": "Required server permissions: audit:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/jobs/{id}/retry": {
+      "post": {
+        "operationId": "JobsController_retry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Background Jobs"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      }
+    },
+    "/v1/auth/password-reset/verify": {
+      "post": {
+        "operationId": "AuthController_verifyReset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "summary": "Register a customer; role/permission fields are rejected",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/session": {
+      "get": {
+        "operationId": "AuthController_session",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/sessions": {
+      "get": {
+        "operationId": "AuthController_sessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/sessions/{id}": {
+      "delete": {
+        "operationId": "AuthController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/password-reset/request": {
+      "post": {
+        "operationId": "AuthController_requestReset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/password-reset/complete": {
+      "post": {
+        "operationId": "AuthController_completeReset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/email-verification/request": {
+      "post": {
+        "operationId": "AuthController_requestVerification",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/email-verification/complete": {
+      "post": {
+        "operationId": "AuthController_verify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/password": {
+      "put": {
+        "operationId": "AuthController_password",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/mfa/enrollment": {
+      "post": {
+        "operationId": "AuthController_enroll",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/mfa/enrollment/confirm": {
+      "post": {
+        "operationId": "AuthController_confirm",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaConfirmDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_profile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      }
+    },
+    "/v1/me/addresses": {
+      "get": {
+        "operationId": "UsersController_addresses",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      },
+      "post": {
+        "operationId": "UsersController_address",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      }
+    },
+    "/v1/me/addresses/{id}": {
+      "put": {
+        "operationId": "UsersController_updateAddress",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_deleteAddress",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ]
+      }
+    },
+    "/v1/admin/customers": {
+      "get": {
+        "operationId": "UsersController_customers",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: customers:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/customers/{id}": {
+      "get": {
+        "operationId": "UsersController_customer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: customers:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/customers/{id}/disable": {
+      "post": {
+        "operationId": "UsersController_disable",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: customers:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/staff": {
+      "get": {
+        "operationId": "UsersController_staff",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "UsersController_createStaff",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStaffDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/staff/{id}/permissions": {
+      "put": {
+        "operationId": "UsersController_permissions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaffPermissionsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/staff/{id}/disable": {
+      "post": {
+        "operationId": "UsersController_disableStaff",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Customers & Staff"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      }
+    },
+    "/v1/products": {
+      "get": {
+        "operationId": "CatalogController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Category slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "men",
+                "women",
+                "unisex"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Admin list only",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "published",
+                "archived"
+              ]
+            }
+          },
+          {
+            "name": "minPriceMinor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPriceMinor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "size",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collectionId",
+            "required": false,
+            "in": "query",
+            "description": "Collection UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Catalog"
+        ],
+        "security": []
+      }
+    },
+    "/v1/products/{slug}": {
+      "get": {
+        "operationId": "CatalogController_detail",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Catalog"
+        ],
+        "security": []
+      }
+    },
+    "/v1/products/{id}/related": {
+      "get": {
+        "operationId": "CatalogController_related",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Catalog"
+        ],
+        "security": []
+      }
+    },
+    "/v1/categories": {
+      "get": {
+        "operationId": "CatalogController_categories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Catalog"
+        ],
+        "security": []
+      }
+    },
+    "/v1/admin/products": {
+      "get": {
+        "operationId": "AdminCatalogController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Category slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "men",
+                "women",
+                "unisex"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Admin list only",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "published",
+                "archived"
+              ]
+            }
+          },
+          {
+            "name": "minPriceMinor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPriceMinor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "size",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collectionId",
+            "required": false,
+            "in": "query",
+            "description": "Collection UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:read (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "AdminCatalogController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/products/{id}": {
+      "get": {
+        "operationId": "AdminCatalogController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:read (administrators have all permissions)."
+      },
+      "patch": {
+        "operationId": "AdminCatalogController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/products/{id}/publish": {
+      "post": {
+        "operationId": "AdminCatalogController_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/products/{id}/archive": {
+      "post": {
+        "operationId": "AdminCatalogController_archive",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/products/{id}/variants": {
+      "post": {
+        "operationId": "AdminCatalogController_variant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VariantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/variants/{id}": {
+      "patch": {
+        "operationId": "AdminCatalogController_updateVariant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVariantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/categories": {
+      "get": {
+        "operationId": "AdminCatalogController_categories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:read (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "AdminCatalogController_category",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/categories/{id}": {
+      "patch": {
+        "operationId": "AdminCatalogController_updateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      },
+      "delete": {
+        "operationId": "AdminCatalogController_deleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Catalog"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/inventory/{variantId}": {
+      "get": {
+        "operationId": "InventoryController_detail",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Inventory"
+        ],
+        "description": "Required server permissions: inventory:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/inventory": {
+      "get": {
+        "operationId": "InventoryController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Inventory"
+        ],
+        "description": "Required server permissions: inventory:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/inventory/{variantId}/movements": {
+      "get": {
+        "operationId": "InventoryController_movements",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Inventory"
+        ],
+        "description": "Required server permissions: inventory:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/inventory/adjustments": {
+      "post": {
+        "operationId": "InventoryController_adjust",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Inventory"
+        ],
+        "description": "Required server permissions: inventory:adjust (administrators have all permissions)."
+      }
+    },
+    "/v1/cart": {
+      "get": {
+        "operationId": "CartController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      }
+    },
+    "/v1/cart/items/{variantId}": {
+      "put": {
+        "operationId": "CartController_put",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuantityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_remove",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      }
+    },
+    "/v1/cart/items": {
+      "delete": {
+        "operationId": "CartController_clear",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      }
+    },
+    "/v1/me/wishlist": {
+      "get": {
+        "operationId": "CartController_wishlist",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      }
+    },
+    "/v1/me/wishlist/{productId}": {
+      "put": {
+        "operationId": "CartController_wish",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_unwish",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cart & Wishlist"
+        ]
+      }
+    },
+    "/v1/checkout/options": {
+      "get": {
+        "operationId": "CheckoutController_options",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Checkout"
+        ]
+      }
+    },
+    "/v1/checkout/quotes": {
+      "post": {
+        "operationId": "CheckoutController_quote",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Checkout"
+        ]
+      }
+    },
+    "/v1/admin/checkout/quotes": {
+      "post": {
+        "operationId": "AdminCheckoutController_quote",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualQuoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:create (administrators have all permissions)."
+      }
+    },
+    "/v1/orders": {
+      "post": {
+        "operationId": "OrdersController_place",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/v1/me/orders": {
+      "get": {
+        "operationId": "OrdersController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "processing",
+                "shipped",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/v1/orders/{id}": {
+      "get": {
+        "operationId": "OrdersController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/v1/orders/{id}/tracking": {
+      "get": {
+        "operationId": "OrdersController_tracking",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/v1/admin/customers/{id}/orders": {
+      "get": {
+        "operationId": "OrdersController_customerOrders",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "processing",
+                "shipped",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ],
+        "description": "Required server permissions: customers:read, orders:read (administrators have all permissions)."
+      }
+    },
+    "/v1/orders/{id}/cancel": {
+      "post": {
+        "operationId": "OrdersController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/v1/admin/orders": {
+      "get": {
+        "operationId": "AdminOrdersController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "processing",
+                "shipped",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:read (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "AdminOrdersController_create",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:create (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}": {
+      "get": {
+        "operationId": "AdminOrdersController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/cancel": {
+      "post": {
+        "operationId": "AdminOrdersController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:cancel (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/process": {
+      "post": {
+        "operationId": "AdminOrdersController_process",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:fulfill (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/ship": {
+      "post": {
+        "operationId": "AdminOrdersController_ship",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:fulfill (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/deliver": {
+      "post": {
+        "operationId": "AdminOrdersController_deliver",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:fulfill (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/notes": {
+      "post": {
+        "operationId": "AdminOrdersController_note",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Orders"
+        ],
+        "description": "Required server permissions: orders:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/payments": {
+      "get": {
+        "operationId": "PaymentsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Payments"
+        ],
+        "description": "Required server permissions: payments:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/refunds": {
+      "get": {
+        "operationId": "PaymentsController_refunds",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Payments"
+        ],
+        "description": "Required server permissions: payments:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/cod-collections": {
+      "post": {
+        "operationId": "PaymentsController_collection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Payments"
+        ],
+        "description": "Required server permissions: cod:record (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/refunds": {
+      "post": {
+        "operationId": "PaymentsController_refund",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record a COD refund paid externally; this endpoint does not transfer money",
+        "tags": [
+          "Admin / Payments"
+        ],
+        "description": "Required server permissions: refunds:record (administrators have all permissions)."
+      }
+    },
+    "/v1/orders/{id}/payment-session": {
+      "post": {
+        "operationId": "GatewayController_initialize",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ]
+      }
+    },
+    "/v1/orders/{id}/payment-status": {
+      "post": {
+        "operationId": "GatewayController_status",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ]
+      }
+    },
+    "/v1/payments/sslcommerz/ipn": {
+      "post": {
+        "operationId": "GatewayController_ipn",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Online payments"
+        ]
+      }
+    },
+    "/v1/payments/sslcommerz/return/{id}": {
+      "get": {
+        "operationId": "GatewayController_returnGet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Online payments"
+        ]
+      },
+      "post": {
+        "operationId": "GatewayController_returnPost",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Online payments"
+        ]
+      }
+    },
+    "/v1/admin/gateway/payments": {
+      "get": {
+        "operationId": "GatewayController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ],
+        "description": "Required server permissions: payments:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/payment-reconcile": {
+      "post": {
+        "operationId": "GatewayController_reconcile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ],
+        "description": "Required server permissions: payments:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/gateway/refunds": {
+      "get": {
+        "operationId": "GatewayController_refunds",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ],
+        "description": "Required server permissions: payments:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/orders/{id}/gateway-refunds": {
+      "post": {
+        "operationId": "GatewayController_refund",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GatewayRefundDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ],
+        "description": "Required server permissions: refunds:record (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/gateway/refunds/{id}/reconcile": {
+      "post": {
+        "operationId": "GatewayController_refundStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Online payments"
+        ],
+        "description": "Required server permissions: refunds:record (administrators have all permissions)."
+      }
+    },
+    "/v1/orders/{id}/returns": {
+      "post": {
+        "operationId": "ReturnsController_create",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ]
+      }
+    },
+    "/v1/returns/{id}": {
+      "get": {
+        "operationId": "ReturnsController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ]
+      }
+    },
+    "/v1/admin/returns": {
+      "get": {
+        "operationId": "ReturnsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}": {
+      "get": {
+        "operationId": "ReturnsController_adminDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}/approve": {
+      "post": {
+        "operationId": "ReturnsController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:review (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}/reject": {
+      "post": {
+        "operationId": "ReturnsController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:review (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}/receive": {
+      "post": {
+        "operationId": "ReturnsController_receive",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:review (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}/inspect": {
+      "post": {
+        "operationId": "ReturnsController_inspect",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:review (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/returns/{id}/close": {
+      "post": {
+        "operationId": "ReturnsController_close",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Returns"
+        ],
+        "description": "Required server permissions: returns:review (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/promotions": {
+      "get": {
+        "operationId": "PromotionsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Promotions"
+        ],
+        "description": "Required server permissions: promotions:write (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "PromotionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Promotions"
+        ],
+        "description": "Required server permissions: promotions:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/promotions/{id}": {
+      "patch": {
+        "operationId": "PromotionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePromotionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Promotions"
+        ],
+        "description": "Required server permissions: promotions:write (administrators have all permissions)."
+      }
+    },
+    "/v1/storefront": {
+      "get": {
+        "operationId": "ContentController_storefront",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Content & Newsletter"
+        ]
+      }
+    },
+    "/v1/collections": {
+      "get": {
+        "operationId": "ContentController_collections",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Content & Newsletter"
+        ]
+      }
+    },
+    "/v1/admin/collections": {
+      "get": {
+        "operationId": "ContentController_adminCollections",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:read (administrators have all permissions)."
+      },
+      "post": {
+        "operationId": "ContentController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/collections/{id}": {
+      "put": {
+        "operationId": "ContentController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/storefront": {
+      "get": {
+        "operationId": "ContentController_revisions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/storefront/draft": {
+      "post": {
+        "operationId": "ContentController_draft",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StorefrontDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:write (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/storefront/{id}/publish": {
+      "post": {
+        "operationId": "ContentController_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Content & Newsletter"
+        ],
+        "description": "Required server permissions: content:write (administrators have all permissions)."
+      }
+    },
+    "/v1/newsletter/subscriptions": {
+      "post": {
+        "operationId": "ContentController_subscribe",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsletterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Content & Newsletter"
+        ]
+      }
+    },
+    "/v1/newsletter/confirm": {
+      "post": {
+        "operationId": "ContentController_confirm",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Content & Newsletter"
+        ]
+      }
+    },
+    "/v1/newsletter/unsubscribe": {
+      "post": {
+        "operationId": "ContentController_unsubscribe",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Content & Newsletter"
+        ]
+      }
+    },
+    "/v1/admin/reports/overview": {
+      "get": {
+        "operationId": "ReportsController_overview",
+        "parameters": [
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "Inclusive UTC instant, defaults to 30 days ago",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Exclusive UTC instant",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Reports & Audit"
+        ],
+        "description": "Required server permissions: reports:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/audit-logs": {
+      "get": {
+        "operationId": "ReportsController_audit",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Reports & Audit"
+        ],
+        "description": "Required server permissions: audit:read (administrators have all permissions)."
+      }
+    },
+    "/v1/health/live": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ],
+        "security": []
+      }
+    },
+    "/v1/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ],
+        "security": []
+      }
+    },
+    "/v1/media/images": {
+      "post": {
+        "operationId": "MediaController_upload",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "description": "Required server permissions: catalog:write (administrators have all permissions)."
+      }
+    },
+    "/v1/media/images/{name}": {
+      "get": {
+        "operationId": "MediaController_image",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [],
+        "tags": [
+          "Media"
+        ]
+      }
+    },
+    "/v1/orders/{id}/invoice": {
+      "get": {
+        "operationId": "DocumentsController_invoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/admin/orders/{id}/invoice": {
+      "get": {
+        "operationId": "DocumentsController_adminInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ],
+        "description": "Required server permissions: orders:read (administrators have all permissions)."
+      }
+    },
+    "/v1/admin/settings": {
+      "get": {
+        "operationId": "SettingsController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Settings"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      },
+      "put": {
+        "operationId": "SettingsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin / Settings"
+        ],
+        "description": "Required server permissions: staff:manage (administrators have all permissions)."
+      }
+    }
+  },
+  "info": {
+    "title": "MyShop API",
+    "description": "BDT minor-unit pricing. Register/login, copy accessToken into Authorize, then try protected routes. Admin/staff login requires MFA. Mutating commerce commands require Idempotency-Key. Use expectedVersion from the latest resource. GET checkout/options lists configured payment methods. See README for the full test flow.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "TokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "customer@example.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "Customer"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "example": "A-strong-password-123!"
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "customer@example.com"
+          },
+          "password": {
+            "type": "string"
+          },
+          "mfaCode": {
+            "type": "string",
+            "description": "Required for admin/staff: authenticator code"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "EmailDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "customer@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 12
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 12
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "PasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currentPassword"
+        ]
+      },
+      "MfaConfirmDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "code"
+        ]
+      },
+      "ProfileDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "ShippingAddressDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Test Customer"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+8801700000000"
+          },
+          "line1": {
+            "type": "string",
+            "example": "12 Sample Road"
+          },
+          "line2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "example": "Dhaka"
+          },
+          "region": {
+            "type": "string",
+            "example": "Dhaka"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "1207"
+          },
+          "countryCode": {
+            "type": "string",
+            "enum": [
+              "BD"
+            ],
+            "default": "BD"
+          }
+        },
+        "required": [
+          "name",
+          "phone",
+          "line1",
+          "city",
+          "region",
+          "postalCode",
+          "countryCode"
+        ]
+      },
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Home"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ShippingAddressDto"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label",
+          "details"
+        ]
+      },
+      "AddressUpdate": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Home"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ShippingAddressDto"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "details",
+          "expectedVersion"
+        ]
+      },
+      "CreateStaffDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "customer@example.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "Customer"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "example": "A-strong-password-123!"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "catalog:read",
+                "catalog:write",
+                "inventory:read",
+                "inventory:adjust",
+                "orders:read",
+                "orders:create",
+                "orders:fulfill",
+                "orders:cancel",
+                "customers:read",
+                "customers:write",
+                "returns:read",
+                "returns:review",
+                "payments:read",
+                "cod:record",
+                "refunds:record",
+                "reports:read",
+                "content:read",
+                "content:write",
+                "promotions:write",
+                "audit:read",
+                "staff:manage"
+              ]
+            }
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password",
+          "permissions"
+        ]
+      },
+      "StaffPermissionsDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "catalog:read",
+                "catalog:write",
+                "inventory:read",
+                "inventory:adjust",
+                "orders:read",
+                "orders:create",
+                "orders:fulfill",
+                "orders:cancel",
+                "customers:read",
+                "customers:write",
+                "returns:read",
+                "returns:review",
+                "payments:read",
+                "cod:record",
+                "refunds:record",
+                "reports:read",
+                "content:read",
+                "content:write",
+                "promotions:write",
+                "audit:read",
+                "staff:manage"
+              ]
+            }
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "permissions"
+        ]
+      },
+      "VariantDto": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "example": "SHIRT-NAVY-M"
+          },
+          "size": {
+            "type": "string",
+            "example": "M"
+          },
+          "color": {
+            "type": "string",
+            "example": "navy"
+          },
+          "priceMinor": {
+            "type": "number",
+            "example": 129900,
+            "description": "BDT minor units (paisa)"
+          },
+          "compareAtMinor": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sku",
+          "size",
+          "color",
+          "priceMinor"
+        ]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "men",
+              "women",
+              "unisex"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isFeatured": {
+            "type": "boolean"
+          },
+          "isNew": {
+            "type": "boolean"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantDto"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "slug",
+          "description",
+          "categoryId",
+          "gender",
+          "images",
+          "variants"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "men",
+              "women",
+              "unisex"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isFeatured": {
+            "type": "boolean"
+          },
+          "isNew": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "VersionDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "UpdateVariantDto": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "example": "SHIRT-NAVY-M"
+          },
+          "size": {
+            "type": "string",
+            "example": "M"
+          },
+          "color": {
+            "type": "string",
+            "example": "navy"
+          },
+          "priceMinor": {
+            "type": "number",
+            "example": 129900,
+            "description": "BDT minor units (paisa)"
+          },
+          "compareAtMinor": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "number",
+            "default": 0
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "slug"
+        ]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "number",
+            "default": 0
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "AdjustmentDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 10
+          },
+          "reason": {
+            "type": "string",
+            "example": "Initial stock receipt"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "variantId",
+          "quantity",
+          "reason"
+        ]
+      },
+      "QuantityDto": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
+      "CreateQuoteDto": {
+        "type": "object",
+        "properties": {
+          "shippingAddress": {
+            "$ref": "#/components/schemas/ShippingAddressDto"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "cod",
+              "sslcommerz"
+            ],
+            "default": "cod"
+          },
+          "promotionCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "shippingAddress",
+          "paymentMethod"
+        ]
+      },
+      "ManualItemDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "variantId",
+          "quantity"
+        ]
+      },
+      "ManualQuoteDto": {
+        "type": "object",
+        "properties": {
+          "shippingAddress": {
+            "$ref": "#/components/schemas/ShippingAddressDto"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "cod",
+              "sslcommerz"
+            ],
+            "default": "cod"
+          },
+          "promotionCode": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManualItemDto"
+            }
+          }
+        },
+        "required": [
+          "shippingAddress",
+          "paymentMethod",
+          "customerId",
+          "items"
+        ]
+      },
+      "PlaceOrderDto": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "quoteId"
+        ]
+      },
+      "CancelOrderDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "reason"
+        ]
+      },
+      "ShipOrderDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "courier": {
+            "type": "string"
+          },
+          "trackingNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "courier",
+          "trackingNumber"
+        ]
+      },
+      "NoteDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "CodCollectionDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "amountMinor": {
+            "type": "number"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique courier/remittance reference"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "collectedAt": {
+            "type": "string",
+            "example": "2026-10-24T10:00:00Z"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "amountMinor",
+          "reference",
+          "evidence",
+          "collectedAt"
+        ]
+      },
+      "RefundDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "amountMinor": {
+            "type": "number"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique reference of a refund already paid to the customer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "currentPassword": {
+            "type": "string",
+            "description": "Reauthenticate the financial action; never stored"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "amountMinor",
+          "reference",
+          "reason",
+          "currentPassword"
+        ]
+      },
+      "GatewayRefundDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "amountMinor": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "currentPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "amountMinor",
+          "reason",
+          "currentPassword"
+        ]
+      },
+      "ReturnLineDto": {
+        "type": "object",
+        "properties": {
+          "orderLineId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "orderLineId",
+          "quantity"
+        ]
+      },
+      "CreateReturnDto": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReturnLineDto"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lines",
+          "reason"
+        ]
+      },
+      "ReviewReturnDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "note"
+        ]
+      },
+      "RestockLineDto": {
+        "type": "object",
+        "properties": {
+          "orderLineId": {
+            "type": "string"
+          },
+          "restockQuantity": {
+            "type": "number",
+            "description": "0 for damaged goods that cannot be resold"
+          }
+        },
+        "required": [
+          "orderLineId",
+          "restockQuantity"
+        ]
+      },
+      "InspectReturnDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "note": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestockLineDto"
+            }
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "note",
+          "lines"
+        ]
+      },
+      "PromotionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "WELCOME10"
+          },
+          "percent": {
+            "type": "number",
+            "example": 10
+          },
+          "minimumMinor": {
+            "type": "number",
+            "example": 100000
+          },
+          "maxUses": {
+            "type": "number",
+            "example": 100
+          },
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "percent",
+          "minimumMinor",
+          "maxUses",
+          "startsAt",
+          "endsAt",
+          "active"
+        ]
+      },
+      "UpdatePromotionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "WELCOME10"
+          },
+          "percent": {
+            "type": "number",
+            "example": 10
+          },
+          "minimumMinor": {
+            "type": "number",
+            "example": 100000
+          },
+          "maxUses": {
+            "type": "number",
+            "example": 100
+          },
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "CollectionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "slug",
+          "productIds",
+          "active"
+        ]
+      },
+      "UpdateCollectionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "slug",
+          "productIds",
+          "active",
+          "expectedVersion"
+        ]
+      },
+      "BannerDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "example": "/shop"
+          }
+        },
+        "required": [
+          "title",
+          "imageUrl",
+          "target"
+        ]
+      },
+      "StorefrontDto": {
+        "type": "object",
+        "properties": {
+          "storeName": {
+            "type": "string"
+          },
+          "announcement": {
+            "type": "string"
+          },
+          "banners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BannerDto"
+            }
+          },
+          "contactEmail": {
+            "type": "string"
+          },
+          "contactPhone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "storeName",
+          "banners",
+          "contactEmail",
+          "contactPhone"
+        ]
+      },
+      "NewsletterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "consentRevision": {
+            "type": "string",
+            "example": "2026-10"
+          }
+        },
+        "required": [
+          "email",
+          "consentRevision"
+        ]
+      },
+      "SettingsDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "example": 1
+          },
+          "shippingMinor": {
+            "type": "number"
+          },
+          "freeShippingThresholdMinor": {
+            "type": "number"
+          },
+          "taxBasisPoints": {
+            "type": "number"
+          },
+          "returnWindowDays": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "shippingMinor",
+          "freeShippingThresholdMinor",
+          "taxBasisPoints",
+          "returnWindowDays"
+        ]
+      }
+    }
+  }
+}

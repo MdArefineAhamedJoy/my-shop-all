@@ -1,0 +1,68 @@
+name: myshop
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: myshop
+      POSTGRES_USER: myshop
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myshop -d myshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+    restart: unless-stopped
+  migrate:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://myshop:${POSTGRES_PASSWORD}@postgres:5432/myshop
+      DATABASE_SSL: "false"
+    command: ["npm", "run", "migration:run:prod"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://myshop:${POSTGRES_PASSWORD}@postgres:5432/myshop
+      DATABASE_SSL: "false"
+      SMTP_URL: smtp://mailpit:1025
+      NODE_ENV: development
+      STOREFRONT_URL: http://localhost:3000
+    ports:
+      - "127.0.0.1:${API_PORT:-4000}:4000"
+    volumes:
+      - media_data:/app/storage
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_started
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4000/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  media_data:

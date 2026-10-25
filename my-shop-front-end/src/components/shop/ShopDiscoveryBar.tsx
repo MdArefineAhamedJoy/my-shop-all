@@ -25,10 +25,7 @@ const ShopDiscoveryBar: React.FC<ShopDiscoveryBarProps> = ({
   const [isPricePopoverOpen, setIsPricePopoverOpen] = useState(false);
 
   const sortOptions = [
-    { id: "availability", label: "Availability" },
-    { id: "best-selling", label: "Best Selling" },
     { id: "newest", label: "Date, new to old" },
-    { id: "oldest", label: "Date, old to new" },
     { id: "price-low", label: "Price, low to high" },
     { id: "price-high", label: "Price, high to low" },
   ];

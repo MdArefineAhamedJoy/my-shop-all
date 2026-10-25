@@ -9,12 +9,12 @@ export function Newsletter() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const save = () => {
+  const save = async () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Enter a valid email address.");
       return;
     }
-    dispatch({ type: "newsletter", email: email.trim() });
+    if (!(await dispatch({ type: "newsletter", email: email.trim() }))) return;
     setSaved(true);
     setError("");
   };
@@ -40,8 +40,7 @@ export function Newsletter() {
       <Button title="Join the circle" variant="dark" onPress={save} />
       {saved && (
         <Notice tone="success">
-          Your email is saved in this preview. Newsletter delivery is not
-          connected yet.
+          Check your email to confirm your subscription.
         </Notice>
       )}
     </View>

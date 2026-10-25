@@ -31,7 +31,7 @@ export default function CreateNewPassword() {
         label="New password"
         isPassword
         placeholder="Create a new password"
-        hint="Use at least 8 characters."
+        hint="Use at least 12 characters."
         autoComplete="new-password"
         autoCapitalize="none"
       />

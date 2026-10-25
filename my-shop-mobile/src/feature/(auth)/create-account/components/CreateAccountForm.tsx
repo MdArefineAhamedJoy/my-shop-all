@@ -53,7 +53,7 @@ export function CreateAccountForm() {
         icon="lock-closed-outline"
         placeholder="Create a password"
         isPassword
-        hint="Use at least 8 characters."
+        hint="Use at least 12 characters."
         autoCapitalize="none"
         autoComplete="new-password"
       />

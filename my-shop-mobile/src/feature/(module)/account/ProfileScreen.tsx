@@ -36,7 +36,7 @@ export default function ProfileScreen() {
       <View style={styles.form}>
         <SectionHeading
           title="The details about you."
-          subtitle="Keep your preview profile up to date."
+          subtitle="Keep your account details up to date."
         />
         <FormField
           control={control}
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
         />
         {save.error && <Notice tone="error">{save.error.message}</Notice>}
         {save.isSuccess && (
-          <Notice tone="success">Your preview profile has been updated.</Notice>
+          <Notice tone="success">Your profile has been updated.</Notice>
         )}
         <View style={styles.button}>
           <Button

@@ -2,7 +2,7 @@
 
 import ProductCard from "@/components/product/ProductCard";
 import ShopDiscoveryBar from "@/components/shop/ShopDiscoveryBar";
-import { MOCK_PRODUCTS } from "@/lib/mockData";
+import { useCatalog } from "@/lib/catalog";
 import { AnimatePresence, motion } from "framer-motion";
 import { use, useEffect, useMemo, useState } from "react";
 
@@ -25,6 +25,20 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
   const [localSearchQuery, setLocalSearchQuery] = useState("");
   const [internalSortBy, setInternalSortBy] = useState<string>("newest");
   const [localPriceRange, setLocalPriceRange] = useState({ min: "", max: "" });
+  const filters: Record<string, string> = {};
+  if (category) filters.category = category;
+  if (gender) filters.gender = gender;
+  if (tag) filters.tag = tag;
+  if (localSearchQuery.trim()) filters.q = localSearchQuery.trim();
+  if (localPriceRange.min)
+    filters.minPriceMinor = String(
+      Math.round(Number(localPriceRange.min) * 100),
+    );
+  if (localPriceRange.max || priceMax)
+    filters.maxPriceMinor = String(
+      Math.round(Number(localPriceRange.max || priceMax) * 100),
+    );
+  const { products, error, loading, hasMore, loadMore } = useCatalog(filters);
 
   // Sync scroll on page change
   useEffect(() => {
@@ -35,7 +49,7 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
 
   // Combined Strict & Internal Filter Logic
   const filteredProducts = useMemo(() => {
-    let filtered = [...MOCK_PRODUCTS];
+    let filtered = [...products];
 
     // 1. URL Parameter Filters (Strict)
     if (category) {
@@ -45,7 +59,9 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
     }
     if (gender) {
       filtered = filtered.filter(
-        (p) => p.gender.toLowerCase() === gender.toLowerCase(),
+        (p) =>
+          p.gender.toLowerCase() === gender.toLowerCase() ||
+          p.gender === "unisex",
       );
     }
     if (tag) {
@@ -95,6 +111,7 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
 
     return filtered;
   }, [
+    products,
     category,
     gender,
     tag,
@@ -180,6 +197,16 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
 
       {/* Main Content Area */}
       <section className="container pb-20 md:pb-32">
+        {error && (
+          <p role="alert" className="py-6 text-red-700">
+            {error}
+          </p>
+        )}
+        {loading && (
+          <p role="status" className="py-6">
+            Loading products…
+          </p>
+        )}
         {/* Cinematic Grid with Enhanced Vertical Spacing */}
         <div className="min-h-[60vh] py-16 md:py-24">
           <AnimatePresence mode="wait">
@@ -222,6 +249,15 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
           </AnimatePresence>
         </div>
 
+        {hasMore && (
+          <button
+            disabled={loading}
+            onClick={() => void loadMore()}
+            className="block mx-auto border px-8 py-3"
+          >
+            Load more products
+          </button>
+        )}
         {/* Minimalist Pagination */}
         {totalPages > 1 && (
           <div className="mt-32 flex justify-center items-center gap-6">

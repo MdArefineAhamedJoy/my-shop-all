@@ -52,7 +52,26 @@ const slides: HeroSlide[] = [
   },
 ];
 
-const HeroSlider: React.FC = () => {
+const HeroSlider = ({
+  banners,
+}: {
+  banners?: {
+    title: string;
+    subtitle?: string;
+    imageUrl: string;
+    target: string;
+  }[];
+}) => {
+  const activeSlides = banners?.length
+    ? banners.map((b, i) => ({
+        id: String(i),
+        image: b.imageUrl,
+        title: b.title,
+        subtitle: b.subtitle || "",
+        ctaText: "Shop now",
+        ctaLink: b.target,
+      }))
+    : slides;
   return (
     // Height reduced as requested
     <section className="relative w-full h-[400px] md:h-[500px] lg:h-[550px]">
@@ -74,7 +93,7 @@ const HeroSlider: React.FC = () => {
         loop={true}
         className="w-full h-full"
       >
-        {slides.map((slide, index) => (
+        {activeSlides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
             <div className="relative w-full h-full overflow-hidden">
               {/* Background Image using Image for optimization */}

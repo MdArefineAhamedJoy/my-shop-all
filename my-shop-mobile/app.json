@@ -5,8 +5,16 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "myshop",
-    "experiments": { "typedRoutes": true },
-    "plugins": ["expo-router", "expo-status-bar", "expo-video", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-video",
+      "expo-font",
+      "expo-secure-store"
+    ],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {

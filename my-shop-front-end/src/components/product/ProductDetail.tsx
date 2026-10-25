@@ -43,8 +43,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const mounted = useIsMounted();
   const inWishlist = mounted ? isInWishlist(product.id) : false;
 
-  const handleAddToCart = () => {
-    addToCart(product, selectedSize, selectedColor, quantity);
+  const handleAddToCart = async () => {
+    if (!(await addToCart(product, selectedSize, selectedColor, quantity)))
+      return;
     setMiniCartOpen(false);
     router.push("/cart");
   };
@@ -349,6 +350,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             {/* Actions */}
             <div className="flex flex-col gap-2.5 mt-8">
               <button
+                disabled={!mounted}
                 onClick={handleAddToCart}
                 className="w-full bg-[#1c1c1c] text-white py-3.5 text-xs font-semibold uppercase tracking-wide hover:bg-[#2d2d2d] transition-all duration-200"
               >

@@ -16,7 +16,7 @@ function Bootstrap({ children }: PropsWithChildren) {
   const session = useSessionStatus();
   const shop = useShop();
   if (fontError) return <LoadingScreen failed />;
-  if (!fontsLoaded || !session.ready || !shop.ready) return <LoadingScreen />;
+  if (!fontsLoaded || !session.ready) return <LoadingScreen />;
   return (
     <>
       {(session.error || shop.error) && (

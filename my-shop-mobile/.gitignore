@@ -43,3 +43,8 @@ yarn-error.*
 # browser verification output
 test-results/
 playwright-report/
+
+!.env.example
+
+# Local build and verification output
+*.log

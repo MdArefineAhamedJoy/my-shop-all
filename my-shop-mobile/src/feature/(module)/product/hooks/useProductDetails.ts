@@ -11,14 +11,25 @@ export function useProductDetails(product: Product) {
   const [message, setMessage] = useState("");
   const [added, setAdded] = useState(false);
   const reserved = state.cart
-    .filter((item) => item.product.id === product.id)
+    .filter(
+      (item) =>
+        item.product.id === product.id &&
+        item.size === size &&
+        item.color === color
+    )
     .reduce((sum, item) => sum + item.quantity, 0);
-  const available = Math.max(0, product.stock - reserved);
+  const selectedVariant = product.variants?.find(
+    (v) => v.size === size && v.color === color
+  );
+  const available = Math.max(
+    0,
+    (selectedVariant?.maxOrderQuantity ?? product.stock) - reserved
+  );
   const clearNotice = () => {
     setMessage("");
     setAdded(false);
   };
-  const addToBag = (buyNow = false) => {
+  const addToBag = async (buyNow = false) => {
     setAdded(false);
     if (!size) {
       setMessage("Please select your size first.");
@@ -28,7 +39,10 @@ export function useProductDetails(product: Product) {
       setMessage(`Only ${available} more pieces are available.`);
       return;
     }
-    dispatch({ type: "add", product, size, color, quantity });
+    if (!(await dispatch({ type: "add", product, size, color, quantity }))) {
+      setMessage("Could not update your bag. Please sign in and try again.");
+      return;
+    }
     setAdded(true);
     setMessage("Added to your bag.");
     if (buyNow) router.push("/checkout");

@@ -7,9 +7,13 @@ const email = z
   .email("Enter a valid email address.");
 const password = z
   .string()
-  .min(8, "Use at least 8 characters.")
+  .min(12, "Use at least 12 characters.")
   .max(128, "Use no more than 128 characters.");
-export const loginSchema = z.object({ email, password });
+export const loginSchema = z.object({
+  email,
+  password,
+  mfaCode: z.string().optional(),
+});
 export const registerSchema = loginSchema
   .extend({
     name: z.string().trim().min(2, "Enter your full name."),
@@ -24,7 +28,12 @@ export const registerSchema = loginSchema
   });
 export const forgotPasswordSchema = z.object({ email });
 export const verificationSchema = z.object({
-  code: z.string().regex(/^\d{6}$/, "Enter all 6 digits."),
+  code: z
+    .string()
+    .regex(
+      /^[A-Za-z0-9_-]{40,200}$/,
+      "Paste the one-time reset token from your email."
+    ),
 });
 export const resetPasswordSchema = z
   .object({ password, confirmPassword: z.string() })

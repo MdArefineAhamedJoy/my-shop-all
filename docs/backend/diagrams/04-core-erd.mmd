@@ -1,0 +1,79 @@
+erDiagram
+    USERS ||--o{ SESSIONS : authenticates
+    USERS ||--o{ ADDRESSES : owns
+    USERS o|--o{ CARTS : owns
+    USERS o|--o{ ORDERS : places
+    CATEGORIES ||--o{ PRODUCTS : groups
+    PRODUCTS ||--|{ PRODUCT_VARIANTS : offers
+    PRODUCT_VARIANTS ||--|| INVENTORY_BALANCES : counts
+    CARTS ||--o{ CART_ITEMS : contains
+    PRODUCT_VARIANTS ||--o{ CART_ITEMS : selected
+    CARTS ||--o{ CHECKOUT_QUOTES : prices
+    CHECKOUT_QUOTES ||--o| ORDERS : converts
+    ORDERS ||--|{ ORDER_ITEMS : snapshots
+    PRODUCT_VARIANTS ||--o{ ORDER_ITEMS : references
+    ORDER_ITEMS ||--o| INVENTORY_RESERVATIONS : reserves
+    PRODUCT_VARIANTS ||--o{ INVENTORY_MOVEMENTS : records
+    ORDERS ||--|| ORDER_PAYMENT_SUMMARIES : summarizes
+    ORDERS ||--o{ PAYMENT_ATTEMPTS : attempts
+    PAYMENT_ATTEMPTS ||--o| PAYMENT_CAPTURES : captures
+    ORDERS ||--o{ COD_COLLECTIONS : collects
+    ORDERS ||--o{ REFUNDS : refunds
+    PAYMENT_CAPTURES o|--o{ REFUNDS : funds
+    COD_COLLECTIONS o|--o{ REFUNDS : funds
+    ORDERS ||--o| SHIPMENTS : fulfills
+    ORDERS ||--o{ RETURN_REQUESTS : receives
+    RETURN_REQUESTS ||--|{ RETURN_ITEMS : contains
+    ORDER_ITEMS ||--o{ RETURN_ITEMS : returns
+    ORDERS ||--o{ DOCUMENTS : documents
+    USERS {
+        uuid id PK
+        text email_normalized UK
+        text password_hash
+        text kind
+    }
+    PRODUCT_VARIANTS {
+        uuid id PK
+        uuid product_id FK
+        text sku UK
+        text size_code
+        text color_code
+        bigint price_minor
+    }
+    INVENTORY_BALANCES {
+        uuid variant_id PK,FK
+        int on_hand
+        int reserved
+        int allocated
+        int version
+    }
+    ORDERS {
+        uuid id PK
+        text order_number UK
+        uuid quote_id FK,UK
+        text status
+        bigint total_minor
+        text currency
+    }
+    ORDER_ITEMS {
+        uuid id PK
+        uuid order_id FK
+        uuid variant_id FK
+        int quantity
+        bigint unit_price_minor
+        text sku_snapshot
+    }
+    PAYMENT_ATTEMPTS {
+        uuid id PK
+        uuid order_id FK
+        text operation_key UK
+        text status
+        bigint amount_minor
+    }
+    REFUNDS {
+        uuid id PK
+        uuid order_id FK
+        text operation_key UK
+        bigint amount_minor
+        text status
+    }

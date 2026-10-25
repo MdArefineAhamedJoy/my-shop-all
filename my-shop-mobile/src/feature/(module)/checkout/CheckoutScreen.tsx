@@ -14,7 +14,7 @@ export default function CheckoutScreen() {
   const state = useCheckout();
   const { isWide } = useResponsive();
   const address = state.form.getValues();
-  if (!state.state.cart.length)
+  if (!state.state.cart.length && !state.hasPlacedOrder)
     return (
       <Screen>
         <EmptyState
@@ -29,9 +29,7 @@ export default function CheckoutScreen() {
     <Screen
       footer={
         <Button
-          title={
-            state.step === 1 ? "Continue to payment" : "Place preview order"
-          }
+          title={state.step === 1 ? "Review order" : "Place order"}
           loading={state.order.isPending}
           icon="arrow-forward"
           onPress={() => void state.submit()}
@@ -61,8 +59,8 @@ export default function CheckoutScreen() {
       </View>
       <View style={styles.notice}>
         <Notice>
-          Checkout preview. No payment is collected and no order is sent to the
-          shop.
+          Your order is priced and confirmed by the shop. Online payments open
+          the secure provider page.
         </Notice>
       </View>
       <View style={[styles.layout, isWide && styles.wide]}>
@@ -74,7 +72,7 @@ export default function CheckoutScreen() {
             subtitle={
               state.step === 1
                 ? "Your delivery details, all in one place."
-                : "Choose a payment method for this preview."
+                : "Review your delivery and payment details."
             }
           />
           {state.step === 1 ? (
@@ -117,6 +115,7 @@ export default function CheckoutScreen() {
               <PaymentOptions
                 selected={state.payment}
                 onSelect={state.setPayment}
+                enabled={state.methods}
               />
             </>
           )}
@@ -132,7 +131,10 @@ export default function CheckoutScreen() {
           />
         </View>
         <View style={isWide && styles.summary}>
-          <OrderSummary items={state.state.cart}>
+          <OrderSummary
+            items={state.state.cart}
+            serverTotals={state.quote?.totals}
+          >
             <View style={styles.secure}>
               <Icon
                 name="lock-closed-outline"
@@ -140,7 +142,7 @@ export default function CheckoutScreen() {
                 color={AppColors.secondaryText}
               />
               <Text style={styles.secureText}>
-                Payment options are visual previews.
+                Payment information is handled by the secure payment provider.
               </Text>
             </View>
           </OrderSummary>

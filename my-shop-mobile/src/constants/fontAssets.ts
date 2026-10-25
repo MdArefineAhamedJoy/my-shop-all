@@ -5,5 +5,9 @@ export const fontAssets = {
   Inter_600SemiBold: require("../../assets/fonts/Inter_600SemiBold.ttf"),
   Inter_700Bold: require("../../assets/fonts/Inter_700Bold.ttf"),
   Inter_800ExtraBold: require("../../assets/fonts/Inter_800ExtraBold.ttf"),
-  ionicons: require("../../assets/fonts/Ionicons.ttf"),
+  // Icon fonts have no Latin test glyphs; the web loader must observe an icon.
+  ionicons: {
+    uri: require("../../assets/fonts/Ionicons.ttf"),
+    testString: "\uf101",
+  },
 };

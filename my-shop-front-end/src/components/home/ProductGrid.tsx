@@ -14,7 +14,6 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({
   title,
-  subtitle,
   products,
   viewAllLink,
 }) => {

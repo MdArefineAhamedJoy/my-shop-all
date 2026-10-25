@@ -1,0 +1,27 @@
+flowchart LR
+    Customer["Customer"]
+    Staff["Store staff"]
+    Web["Next.js storefront"]
+    Mobile["Expo mobile app"]
+    Admin["Next.js admin dashboard"]
+    Backend["MyShop backend<br/>Shared API and durable business state"]
+    Payment["Payment provider<br/>Hosted checkout and verification"]
+    Courier["Courier<br/>Shipment and tracking"]
+    Mail["Email or SMS provider"]
+    Customer --> Web
+    Customer --> Mobile
+    Staff --> Admin
+    Web -->|HTTPS| Backend
+    Mobile -->|HTTPS| Backend
+    Admin -->|HTTPS| Backend
+    Backend <-->|Verified financial events| Payment
+    Backend <-->|Booking and tracking| Courier
+    Backend -->|Notifications| Mail
+    classDef human fill:#fff3df,stroke:#ad6412,color:#52320d
+    classDef client fill:#eaf2ff,stroke:#4169a1,color:#17395f
+    classDef core fill:#e4f5ee,stroke:#298264,color:#164a3a
+    classDef external fill:#f1edf8,stroke:#79619c,color:#45335d
+    class Customer,Staff human
+    class Web,Mobile,Admin client
+    class Backend core
+    class Payment,Courier,Mail external

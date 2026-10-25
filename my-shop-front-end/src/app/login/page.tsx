@@ -5,15 +5,42 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const router = useRouter();
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    const values = new FormData(e.currentTarget);
+    try {
+      await api("auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: values.get("email"),
+          password: values.get("password"),
+          ...(values.get("mfaCode") ? { mfaCode: values.get("mfaCode") } : {}),
+        }),
+      });
+      const next =
+        new URLSearchParams(location.search).get("next") || "/account";
+      router.replace(
+        next.startsWith("/") && !next.startsWith("//") ? next : "/account",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Login failed");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="min-h-screen h-dvh bg-white flex flex-col lg:flex-row overflow-hidden">
-
       {/* ══════════════════════════════
           Visual Side — Desktop only
       ══════════════════════════════ */}
@@ -38,14 +65,19 @@ const LoginPage = () => {
             The Archive
           </span>
           <h1 className="text-5xl font-black italic leading-[1.1] mb-4">
-            Revisit your<br />curated style.
+            Revisit your
+            <br />
+            curated style.
           </h1>
           <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
-            Access your dashboard, track orders, and explore the season&apos;s most exclusive pieces.
+            Access your dashboard, track orders, and explore the season&apos;s
+            most exclusive pieces.
           </p>
           <div className="flex items-center gap-3 mt-8">
             <div className="w-10 h-px bg-white/30" />
-            <span className="text-[10px] tracking-[0.4em] text-white/40 uppercase font-bold">Est. 2024</span>
+            <span className="text-[10px] tracking-[0.4em] text-white/40 uppercase font-bold">
+              Est. 2024
+            </span>
           </div>
         </motion.div>
       </div>
@@ -54,7 +86,6 @@ const LoginPage = () => {
           Form Side
       ══════════════════════════════ */}
       <div className="flex-1 flex flex-col overflow-y-auto bg-white">
-
         {/* Mobile Hero */}
         <div className="lg:hidden relative h-48 w-full flex-shrink-0 bg-[#111]">
           <Image
@@ -67,7 +98,9 @@ const LoginPage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
           <div className="absolute top-4 left-4 z-10">
-            <span className="text-xl font-black text-white">MY<span className="text-orange-500">SHOP</span></span>
+            <span className="text-xl font-black text-white">
+              MY<span className="text-orange-500">SHOP</span>
+            </span>
           </div>
         </div>
 
@@ -85,7 +118,6 @@ const LoginPage = () => {
         {/* Form */}
         <div className="flex-1 flex items-center justify-center px-6 sm:px-10 lg:px-16 py-6">
           <div className="w-full max-w-[420px]">
-
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -95,7 +127,9 @@ const LoginPage = () => {
             >
               <div className="hidden lg:flex items-center gap-2 mb-4">
                 <div className="w-1 h-6 bg-orange-500" />
-                <span className="text-xl font-black">MY<span className="text-orange-500">SHOP</span></span>
+                <span className="text-xl font-black">
+                  MY<span className="text-orange-500">SHOP</span>
+                </span>
               </div>
               <h2 className="text-3xl font-black text-[#111] mb-1 tracking-tight">
                 Welcome Back!
@@ -110,7 +144,7 @@ const LoginPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="space-y-5"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={submit}
             >
               {/* Email Field */}
               <div>
@@ -119,6 +153,9 @@ const LoginPage = () => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
                   placeholder="Enter your email address"
                   className="w-full px-4 py-4 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                 />
@@ -132,6 +169,7 @@ const LoginPage = () => {
                   </label>
                   <button
                     type="button"
+                    onClick={() => router.push("/recover")}
                     className="text-[11px] font-black uppercase tracking-wider text-orange-500 hover:text-orange-700 transition-colors"
                   >
                     Forgot?
@@ -140,6 +178,9 @@ const LoginPage = () => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    name="password"
+                    required
+                    autoComplete="current-password"
                     placeholder="Enter your password"
                     className="w-full px-4 py-4 pr-12 bg-[#f5f5f5] border-2 border-[#e8e8e8] rounded-xl text-sm font-medium text-[#111] placeholder:text-gray-400 focus:outline-none focus:border-black focus:bg-white hover:border-gray-300 transition-all duration-200"
                   />
@@ -149,14 +190,29 @@ const LoginPage = () => {
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                     aria-label="Toggle password visibility"
                   >
-                    {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+                    {showPassword ? (
+                      <IoEyeOff size={20} />
+                    ) : (
+                      <IoEye size={20} />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Submit */}
+              <label className="block text-xs">
+                Authenticator code (if enabled)
+                <input
+                  name="mfaCode"
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  className="w-full border rounded-xl p-3 mt-2"
+                />
+              </label>
               <button
                 type="submit"
+                disabled={busy}
                 className="w-full py-4 bg-black text-white text-xs font-black uppercase tracking-[0.25em] rounded-xl hover:bg-orange-500 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-black/15 mt-2"
               >
                 Sign In →
@@ -168,23 +224,6 @@ const LoginPage = () => {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t-2 border-gray-100" />
               </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-4 text-[11px] font-bold uppercase tracking-widest text-gray-400">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            {/* Social Buttons */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <button className="flex items-center justify-center gap-2.5 py-3.5 border-2 border-[#e8e8e8] rounded-xl text-xs font-black uppercase tracking-wider text-[#111] hover:border-black hover:bg-[#f5f5f5] transition-all duration-200">
-                <FcGoogle size={19} />
-                Google
-              </button>
-              <button className="flex items-center justify-center gap-2.5 py-3.5 border-2 border-[#e8e8e8] rounded-xl text-xs font-black uppercase tracking-wider text-[#111] hover:border-black hover:bg-[#f5f5f5] transition-all duration-200">
-                <FaFacebook size={19} className="text-[#1877F2]" />
-                Facebook
-              </button>
             </div>
 
             {/* Switch */}

@@ -1,6 +1,8 @@
 "use client";
 
 import Button from "@/components/ui/Button";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -54,8 +56,16 @@ const Newsletter: React.FC = () => {
     reset,
   } = useForm<NewsletterFormData>();
 
-  const onSubmit = (data: NewsletterFormData) => {
-    console.log("Newsletter signup:", data, "Persona:", selectedPersona);
+  const onSubmit = async (data: NewsletterFormData) => {
+    try {
+      await api("newsletter/subscriptions", {
+        method: "POST",
+        body: JSON.stringify({ email: data.email, consentRevision: "2026-10" }),
+      });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Subscription failed");
+      return;
+    }
     setSubmitted(true);
     reset();
     setTimeout(() => {
@@ -172,11 +182,10 @@ const Newsletter: React.FC = () => {
                 <IoCheckmarkCircle size={40} className="text-orange-500" />
               </div>
               <h3 className="text-2xl font-serif italic text-white mb-2">
-                Curation Activated
+                Check your email
               </h3>
               <p className="text-gray-400 max-w-sm">
-                Your portal to localized luxury is ready. Check your inbox for
-                your first personalized lookbook.
+                Confirm your subscription using the link in your inbox.
               </p>
             </motion.div>
           ) : (

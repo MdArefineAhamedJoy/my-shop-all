@@ -1,0 +1,40 @@
+flowchart TB
+    Clients["Storefront, admin and mobile clients"]
+    Edge["TLS edge<br/>Origin routing and abuse controls"]
+    subgraph Private["Private application and data network"]
+        API1["API instance 1"]
+        API2["API instance 2"]
+        Worker["Restartable worker pool"]
+        DB[("Managed PostgreSQL<br/>Primary business state")]
+        Redis[("Managed Redis<br/>Queues, cache and throttling")]
+        Secrets["Secret manager"]
+        Telemetry["Logs, metrics and traces"]
+    end
+    Store[("Object storage<br/>Public media and private documents")]
+    Backups[("Encrypted backups and PITR<br/>Separate failure domain")]
+    External["Payment, courier and email providers"]
+    CI["CI build and release pipeline"]
+    Migration["One-off migration task"]
+    Clients --> Edge
+    Edge --> API1
+    Edge --> API2
+    API1 --> DB
+    API2 --> DB
+    Worker --> DB
+    API1 --> Redis
+    API2 --> Redis
+    Worker --> Redis
+    Secrets -.-> API1
+    Secrets -.-> API2
+    Secrets -.-> Worker
+    API1 --> Telemetry
+    API2 --> Telemetry
+    Worker --> Telemetry
+    Worker <--> External
+    Worker --> Store
+    DB --> Backups
+    CI --> Migration
+    Migration --> DB
+    CI -->|Compatible image rollout| API1
+    CI -->|Compatible image rollout| API2
+    CI --> Worker

@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant Provider as Payment provider
+    participant API as Callback endpoint
+    participant DB as PostgreSQL
+    participant Worker as Settlement worker
+    participant Client as Customer client
+    Provider->>API: Callback with adapter-specific proof
+    API->>API: Authenticate and normalize bounded payload
+    API->>DB: Persist unique inbox event
+    DB-->>API: Durable acceptance or existing duplicate
+    API-->>Provider: Acknowledge accepted event
+    Worker->>DB: Lease pending inbox event
+    opt Callback needs authoritative provider query
+        Worker->>Provider: Query same transaction reference
+        Provider-->>Worker: Merchant, amount, currency and result
+    end
+    Worker->>DB: BEGIN, lock order, payment and stock records
+    alt Event already applied
+        Worker->>DB: No-op and COMMIT
+    else Verified capture with active hold
+        Worker->>DB: Capture fact, reserve to allocate, order pending
+        Worker->>DB: Summary, financial event and outbox, COMMIT
+    else Verified capture after release or cancellation
+        Worker->>DB: Capture fact, payment exception, refund task
+        Worker->>DB: No fulfillment revival, COMMIT
+    else Invalid financial match or illegal transition
+        Worker->>DB: Record rejection or incident, COMMIT
+    end
+    Client->>API: Fetch order after provider redirect
+    API->>DB: Read authorized durable state
+    API-->>Client: Pending, paid or exception state
+    Note over Client,DB: Redirect parameters never establish payment success

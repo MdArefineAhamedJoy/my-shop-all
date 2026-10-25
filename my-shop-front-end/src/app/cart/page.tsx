@@ -1,5 +1,6 @@
 "use client";
 
+import { useCatalog } from "@/lib/catalog";
 import { useStore } from "@/lib/store";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -24,67 +25,11 @@ const CartPage: React.FC = () => {
   const router = useRouter();
   const mounted = useIsMounted();
 
-  const recommendations = React.useMemo(
-    () => [
-      {
-        id: "1",
-        name: "Beige Linen Shirt",
-        price: 2450,
-        image: "/images/products/beige_linen_shirt_1769620787431.png",
-        slug: "beige-linen-shirt",
-      },
-      {
-        id: "2",
-        name: "Black Jogger Pants",
-        price: 1850,
-        image: "/images/products/black_jogger_pants_1769620963051.png",
-        slug: "black-jogger-pants",
-      },
-      {
-        id: "3",
-        name: "Burgundy Polo Shirt",
-        price: 1450,
-        image: "/images/products/burgundy_polo_shirt_1769620869609.png",
-        slug: "burgundy-polo-shirt",
-      },
-      {
-        id: "4",
-        name: "Charcoal Henley Shirt",
-        price: 1650,
-        image: "/images/products/charcoal_henley_shirt_1769620905282.png",
-        slug: "charcoal-henley-shirt",
-      },
-      {
-        id: "5",
-        name: "Dark Denim Jeans",
-        price: 2950,
-        image: "/images/products/dark_denim_jeans_1769620852374.png",
-        slug: "dark-denim-jeans",
-      },
-      {
-        id: "6",
-        name: "Grey Dress Trousers",
-        price: 2250,
-        image: "/images/products/grey_dress_trousers_1769620923385.png",
-        slug: "grey-dress-trousers",
-      },
-      {
-        id: "7",
-        name: "Khaki Chino Pants",
-        price: 1950,
-        image: "/images/products/khaki_chino_pants_1769620809342.png",
-        slug: "khaki-chino-pants",
-      },
-      {
-        id: "8",
-        name: "Navy Cotton Shirt",
-        price: 2150,
-        image: "/images/products/navy_cotton_shirt_1769620762559.png",
-        slug: "navy-cotton-shirt",
-      },
-    ],
-    [],
-  );
+  const { products } = useCatalog();
+  const recommendations = products
+    .filter((p) => !cart.some((i) => i.product.id === p.id) && p.images.length)
+    .slice(0, 12)
+    .map((p) => ({ ...p, image: p.images[0] }));
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -96,9 +41,10 @@ const CartPage: React.FC = () => {
     productId: string,
     size: string,
     newQuantity: number,
+    color?: string,
   ) => {
     if (newQuantity < 1) return;
-    updateCartQuantity(productId, size, newQuantity);
+    updateCartQuantity(productId, size, newQuantity, color);
   };
 
   if (!mounted) return null;
@@ -212,6 +158,7 @@ const CartPage: React.FC = () => {
                                 item.product.id,
                                 item.selectedSize,
                                 item.quantity - 1,
+                                item.selectedColor,
                               )
                             }
                             className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 transition-colors"
@@ -227,6 +174,7 @@ const CartPage: React.FC = () => {
                                 item.product.id,
                                 item.selectedSize,
                                 item.quantity + 1,
+                                item.selectedColor,
                               )
                             }
                             className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 transition-colors"
@@ -259,7 +207,11 @@ const CartPage: React.FC = () => {
                         </span>
                         <button
                           onClick={() =>
-                            removeFromCart(item.product.id, item.selectedSize)
+                            removeFromCart(
+                              item.product.id,
+                              item.selectedSize,
+                              item.selectedColor,
+                            )
                           }
                           className="text-gray-400 hover:text-black transition-colors"
                         >

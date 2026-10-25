@@ -89,9 +89,7 @@ export function AuthFormScreen({
               {children}
               <View style={styles.preview}>
                 <View style={styles.dot} />
-                <Text style={styles.previewText}>
-                  Frontend preview · No live account or email service
-                </Text>
+                <Text style={styles.previewText}>Secure account · MyShop</Text>
               </View>
             </View>
           </ScrollView>

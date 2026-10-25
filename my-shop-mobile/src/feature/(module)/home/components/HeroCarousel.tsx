@@ -4,11 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button, Text } from "@/components/ui";
-import { heroSlides } from "@/data/storefront";
+import { heroSlides as defaultSlides } from "@/data/storefront";
+import { useStorefront } from "@/hooks/useStorefront";
 import { imageSource } from "@/data/images";
 import { useResponsive } from "@/hooks/useResponsive";
 
 export function HeroCarousel() {
+  const { data } = useStorefront();
+  const heroSlides = data?.banners?.length
+    ? data.banners.map((b) => {
+        const url = new URL(b.href, "https://shop.example");
+        return {
+          title: b.title,
+          subtitle: b.subtitle || "",
+          image: b.imageUrl,
+          cta: "Shop the collection",
+          tag: url.searchParams.get("tag") || "",
+          category: url.searchParams.get("category") || "",
+        };
+      })
+    : defaultSlides;
   const { contentWidth, isWide } = useResponsive();
   const width = contentWidth - 40;
   const [index, setIndex] = useState(0);
@@ -19,7 +34,7 @@ export function HeroCarousel() {
       6000
     );
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
   useEffect(() => {
     scroll.current?.scrollTo({ x: index * width, animated: true });
   }, [index, width]);

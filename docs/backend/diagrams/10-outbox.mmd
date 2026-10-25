@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant API as Domain command
+    participant DB as PostgreSQL
+    participant Dispatcher as Outbox dispatcher
+    participant Redis as BullMQ on Redis
+    participant Consumer as Worker consumer
+    participant External as External provider
+    rect rgb(235, 247, 240)
+        API->>DB: BEGIN
+        API->>DB: Domain rows and outbox event
+        API->>DB: COMMIT
+    end
+    Dispatcher->>DB: Lease due outbox rows
+    DB-->>Dispatcher: Event IDs and minimal payloads
+    Dispatcher->>Redis: Enqueue event ID
+    Dispatcher->>DB: Record dispatch attempt
+    Note over Dispatcher,Redis: Crash can duplicate enqueue, SQL remains recoverable
+    Redis->>Consumer: Deliver job at least once
+    Consumer->>DB: Claim consumer/event receipt and task lease
+    alt Already completed
+        Consumer-->>Redis: Acknowledge no-op
+    else SQL-only effect
+        Consumer->>DB: Effect plus completed receipt in one transaction
+    else External effect
+        Consumer->>External: Stable operation key
+        External-->>Consumer: Known result or unknown timeout
+        Consumer->>DB: Persist result or reconciliation task
+        Consumer->>DB: Complete receipt only after durable resolution
+    end
+    Note over Consumer,External: No general exactly-once guarantee for external effects

@@ -3,14 +3,21 @@ import { StyleSheet, View } from "react-native";
 import { ProductList } from "@/components/commerce/ProductList";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { EmptyState } from "@/components/ui";
-import { MOCK_PRODUCTS } from "@/data/products";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/services/api";
+import { productFromApi, RemoteProduct } from "@/services/liveCatalogService";
 import { useShop } from "@/hooks/useShop";
 
 export default function WishlistScreen() {
   const { state } = useShop();
-  const products = MOCK_PRODUCTS.filter((product) =>
-    state.wishlist.includes(product.id)
-  );
+  const { data: products = [] } = useQuery({
+    queryKey: ["wishlist", ...state.wishlist],
+    queryFn: async () =>
+      (await api<{ product: RemoteProduct }[]>("me/wishlist?limit=100")).map(
+        (row) => productFromApi(row.product)
+      ),
+    enabled: state.wishlist.length > 0,
+  });
   return (
     <ProductList
       products={products}

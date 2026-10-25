@@ -10,6 +10,7 @@ export function useShopFilters() {
     tag?: string;
     category?: string;
     search?: string;
+    collectionId?: string;
   }>();
   const [query, setQuery] = useState("");
   const [extra, setExtra] = useState<Filters>({});
@@ -53,7 +54,14 @@ export function useShopFilters() {
             sale: "The Sale Edit",
           }[tag] || "The Collection";
   return {
-    filters: { ...extra, query, gender, tag, category },
+    filters: {
+      ...extra,
+      query,
+      gender,
+      tag,
+      category,
+      collectionId: single(params.collectionId),
+    },
     query,
     setQuery,
     extra,

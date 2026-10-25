@@ -40,7 +40,27 @@ const product = products[0];
 const { loginSchema, registerSchema, resetPasswordSchema } = load(
   "src/feature/(auth)/schemas/authSchemas.ts"
 );
-const { authService, PREVIEW_OTP } = load("src/services/authService.ts");
+const calls = [];
+const originalRequire = Module.prototype.require;
+Module.prototype.require = function (name) {
+  if (name === "./api")
+    return {
+      api: async (path, options) => {
+        calls.push({ path, body: JSON.parse(options.body) });
+      },
+      authenticate: async (path, body) => {
+        calls.push({ path, body });
+        return {
+          id: "customer",
+          email: body.email,
+          name: body.name || "Customer",
+        };
+      },
+    };
+  return originalRequire.apply(this, arguments);
+};
+const { authService } = load("src/services/liveAuthService.ts");
+Module.prototype.require = originalRequire;
 const { resolveAuthDestination } = load("src/utils/navigation.ts");
 const add = (state, overrides = {}) =>
   reducer(state, {
@@ -94,11 +114,11 @@ test("quantities stay positive and removing one variant keeps the other", () => 
   assert.equal(removed.cart.length, 1);
   assert.equal(removed.cart[0].color, "White");
 });
-test("checkout calculates the same 10% estimated tax as the web shop", () => {
+test("cart subtotal excludes tax until the server provides a quote", () => {
   assert.deepEqual(totals(add(initialState, { quantity: 2 }).cart), {
     subtotal: 3798,
-    tax: 379.8,
-    total: 4177.8,
+    tax: 0,
+    total: 3798,
   });
   assert.deepEqual(totals([]), { subtotal: 0, tax: 0, total: 0 });
 });
@@ -190,15 +210,17 @@ test("auth forms validate email, password, terms and password confirmation", () 
     false
   );
   assert.equal(
-    loginSchema.safeParse({ email: "demo@example.com", password: "Preview123" })
-      .success,
+    loginSchema.safeParse({
+      email: "demo@example.com",
+      password: "Live-password-123",
+    }).success,
     true
   );
   const values = {
     name: "Demo User",
     email: "demo@example.com",
-    password: "Preview123",
-    confirmPassword: "Preview123",
+    password: "Live-password-123",
+    confirmPassword: "Live-password-123",
     acceptedTerms: true,
   };
   assert.equal(registerSchema.safeParse(values).success, true);
@@ -213,43 +235,41 @@ test("auth forms validate email, password, terms and password confirmation", () 
   );
   assert.equal(
     resetPasswordSchema.safeParse({
-      password: "Preview123",
+      password: "Live-password-123",
       confirmPassword: "different",
     }).success,
     false
   );
 });
 
-test("preview auth never returns a password or a fake access token", async () => {
+test("live registration sends account fields only and exposes no password", async () => {
+  calls.length = 0;
   const session = await authService.register({
-    name: "Demo User",
-    email: " DEMO@example.com ",
-    password: "Preview123",
-    confirmPassword: "Preview123",
+    name: "Customer",
+    email: "customer@example.com",
+    password: "Live-password-123",
+    confirmPassword: "Live-password-123",
+    acceptedTerms: true,
   });
-  assert.equal(session.mode, "preview");
-  assert.equal(session.user.email, "demo@example.com");
-  assert.equal(JSON.stringify(session).includes("Preview123"), false);
-  assert.equal("token" in session, false);
+  assert.equal(session.mode, "live");
+  assert.equal("password" in session.user, false);
+  assert.deepEqual(Object.keys(calls[0].body).sort(), [
+    "email",
+    "name",
+    "password",
+  ]);
 });
-
-test("password reset preview requires a matching unexpired code", async () => {
-  const challenge = await authService.requestReset("demo@example.com");
-  await assert.rejects(
-    authService.verifyCode(challenge, "999999"),
-    /incorrect/
-  );
-  await assert.rejects(
-    authService.verifyCode({ ...challenge, expiresAt: 0 }, PREVIEW_OTP),
-    /expired/
-  );
-  await assert.rejects(
-    authService.resetPassword(challenge, "Preview123"),
-    /Verify/
-  );
-  const verified = await authService.verifyCode(challenge, PREVIEW_OTP);
-  assert.equal(verified.verified, true);
-  await authService.resetPassword(verified, "Preview123");
+test("password reset verifies and consumes the server token", async () => {
+  calls.length = 0;
+  const challenge = await authService.requestReset("customer@example.com");
+  const token = "a".repeat(64);
+  const verified = await authService.verifyCode(challenge, token);
+  await authService.resetPassword(verified, "Live-password-123");
+  assert.equal(calls[1].path, "auth/password-reset/verify");
+  assert.deepEqual(calls[2], {
+    path: "auth/password-reset/complete",
+    body: { token, newPassword: "Live-password-123" },
+  });
 });
 
 test("sign-in return destinations only allow known in-app screens", () => {

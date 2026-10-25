@@ -28,6 +28,7 @@ const Header: React.FC = () => {
   const headerRef = React.useRef<HTMLElement>(null);
 
   const {
+    user,
     cart,
     wishlist,
     setMobileMenuOpen,
@@ -178,7 +179,7 @@ const Header: React.FC = () => {
                 </button>
 
                 <Link
-                  href="/login"
+                  href={user ? "/account" : "/login"}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors hidden md:block text-gray-700"
                   aria-label="Account"
                 >

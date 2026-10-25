@@ -1,0 +1,33 @@
+flowchart TB
+    Request["Customer requests return<br/>Order lines, quantity and reason"]
+    Check{"Owned delivered items<br/>and remaining eligibility?"}
+    Rejected["Rejected with reason<br/>No stock or money effect"]
+    Approved["Approve under order-line lock<br/>Reserve return entitlement"]
+    Received["Physically receive goods<br/>Record received quantities"]
+    Inspect["Inspect and accept quantities<br/>Choose disposition"]
+    Restock{"Sellable goods?"}
+    AddStock["Idempotent stock movement<br/>Increase on-hand quantity"]
+    Quarantine["Damaged or quarantine<br/>No sellable stock increase"]
+    Refund{"Refund required and authorized?"}
+    ReserveMoney["Lock funding source<br/>Reserve refundable amount"]
+    Submit["Submit stable refund operation<br/>Reconcile unknown outcomes"]
+    Settle["Verified refund success<br/>Financial event and credit document"]
+    Close["Close after required physical<br/>and financial tasks resolve"]
+    Request --> Check
+    Check -->|No| Rejected
+    Check -->|Yes| Approved
+    Approved --> Received
+    Received --> Inspect
+    Inspect --> Restock
+    Restock -->|Yes| AddStock
+    Restock -->|No| Quarantine
+    Inspect --> Refund
+    Refund -->|Yes| ReserveMoney
+    ReserveMoney --> Submit
+    Submit --> Settle
+    Refund -->|No| Close
+    AddStock --> Close
+    Quarantine --> Close
+    Settle --> Close
+    classDef financial fill:#fff3df,stroke:#ad6412,color:#52320d
+    class ReserveMoney,Submit,Settle financial

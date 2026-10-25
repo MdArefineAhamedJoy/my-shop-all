@@ -1,0 +1,106 @@
+name: myshop_production
+x-api-environment: &api-environment
+  NODE_ENV: production
+  PORT: 4000
+  DATABASE_SSL: "false"
+  JWT_SECRET: ${JWT_SECRET:?Configure JWT_SECRET}
+  APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?Configure APP_ENCRYPTION_KEY}
+  APP_URL: https://${API_DOMAIN:?Configure API_DOMAIN}
+  STOREFRONT_URL: https://${SHOP_DOMAIN:?Configure SHOP_DOMAIN}
+  PAYMENT_PUBLIC_URL: https://${API_DOMAIN}
+  CORS_ORIGINS: https://${SHOP_DOMAIN},https://${ADMIN_DOMAIN:?Configure ADMIN_DOMAIN}
+  TRUST_PROXY_HOPS: 1
+  DB_POOL_MAX: 20
+  SWAGGER_ENABLED: "false"
+  WORKER_ENABLED: "true"
+  SMTP_URL: ${SMTP_URL:?Configure production SMTP}
+  MAIL_FROM: ${MAIL_FROM:?Configure MAIL_FROM}
+  SSLCOMMERZ_STORE_ID: ${SSLCOMMERZ_STORE_ID:-}
+  SSLCOMMERZ_STORE_PASSWORD: ${SSLCOMMERZ_STORE_PASSWORD:-}
+  SSLCOMMERZ_SANDBOX: ${SSLCOMMERZ_SANDBOX:-true}
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: myshop
+      POSTGRES_USER: myshop
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Use a random hexadecimal migration password}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U myshop -d myshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    build: ../my-shop-backend
+    environment:
+      <<: *api-environment
+      DATABASE_URL: postgresql://myshop:${POSTGRES_PASSWORD}@postgres:5432/myshop
+    command: ["npm","run","migration:run:prod"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: "no"
+  permissions:
+    image: postgres:18-alpine
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_API_PASSWORD: ${POSTGRES_API_PASSWORD:?Use a different random hexadecimal runtime password}
+    volumes:
+      - ./runtime-permissions.sql:/permissions.sql:ro
+    command: ["psql","-h","postgres","-U","myshop","-d","myshop","-v","ON_ERROR_STOP=1","-f","/permissions.sql"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: "no"
+  api:
+    build: ../my-shop-backend
+    environment:
+      <<: *api-environment
+      DATABASE_URL: postgresql://myshop_api:${POSTGRES_API_PASSWORD}@postgres:5432/myshop
+    volumes:
+      - media_data:/app/storage
+    depends_on:
+      permissions: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD","node","-e","fetch('http://127.0.0.1:4000/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  web:
+    build: ../my-shop-front-end
+    environment:
+      API_INTERNAL_URL: http://api:4000/v1
+      APP_ORIGIN: https://${SHOP_DOMAIN}
+      TRUSTED_PROXY_HEADERS: "true"
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+  admin:
+    build: ../my-shop-admin-dashboard
+    environment:
+      API_INTERNAL_URL: http://api:4000/v1
+      APP_ORIGIN: https://${ADMIN_DOMAIN}
+      TRUSTED_PROXY_HEADERS: "true"
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+  caddy:
+    image: caddy:2-alpine
+    ports: ["80:80","443:443","443:443/udp"]
+    environment:
+      SHOP_DOMAIN: ${SHOP_DOMAIN}
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [web,admin,api]
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  media_data:
+  caddy_data:
+  caddy_config:

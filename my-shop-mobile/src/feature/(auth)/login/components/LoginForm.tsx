@@ -45,6 +45,13 @@ export function LoginForm() {
         )}
       />
       <View style={styles.options}>
+        <FormField
+          control={control}
+          name="mfaCode"
+          label="Authenticator code (if enabled)"
+          keyboardType="number-pad"
+          maxLength={6}
+        />
         <Checkbox
           label="Remember me"
           checked={remember}

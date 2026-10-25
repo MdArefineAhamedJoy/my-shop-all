@@ -1,0 +1,31 @@
+flowchart TB
+    Web["Web storefront<br/>Same-origin API proxy"]
+    Admin["Admin dashboard<br/>Same-origin API proxy"]
+    Mobile["Native mobile<br/>Bearer session transport"]
+    Edge["TLS edge and API routing"]
+    subgraph Backend["MyShop backend deployment"]
+        API["NestJS API instances<br/>Validation, identity, domain commands"]
+        Worker["Worker processes<br/>Outbox, expiry, reconciliation, documents"]
+    end
+    DB[("PostgreSQL<br/>Orders, inventory, sessions, outbox")]
+    Redis[("Redis<br/>Cache, throttling, BullMQ")]
+    Storage[("Object storage<br/>Media and private documents")]
+    CDN["Public media CDN"]
+    Providers["Payment, courier and email adapters"]
+    Web --> Edge
+    Admin --> Edge
+    Mobile --> Edge
+    Edge --> API
+    API --> DB
+    API --> Redis
+    API --> Storage
+    Worker --> DB
+    Worker <--> Redis
+    Worker --> Storage
+    Worker <--> Providers
+    API <-->|Callbacks and bounded calls| Providers
+    Storage --> CDN
+    classDef service fill:#e4f5ee,stroke:#298264,color:#164a3a
+    classDef data fill:#fff3df,stroke:#ad6412,color:#52320d
+    class API,Worker service
+    class DB,Redis,Storage data

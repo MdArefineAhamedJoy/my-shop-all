@@ -31,8 +31,8 @@ export function AddressForm({
       postalCode: "",
     },
   });
-  const save = (values: Address) => {
-    dispatch({
+  const save = async (values: Address) => {
+    const saved = await dispatch({
       type: "save-address",
       address: {
         ...values,
@@ -40,7 +40,7 @@ export function AddressForm({
         label: label.trim() || "Home",
       },
     });
-    onSaved();
+    if (saved) onSaved();
   };
   return (
     <>

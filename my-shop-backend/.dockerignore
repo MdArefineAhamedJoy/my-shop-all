@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+.env.*
+.test-postgres
+storage
+coverage
+test-results
+.git
+test
+openapi.json
+.local-admin-setup.txt
+.local-demo-accounts.json
+demo-assets

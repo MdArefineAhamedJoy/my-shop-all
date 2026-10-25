@@ -13,6 +13,11 @@ import {
 import { AppColors } from "@/constants";
 import { useShop } from "@/hooks/useShop";
 import { cartKey, money } from "@/utils/commerce";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/services/api";
+import { orderFromApi, RemoteOrder } from "@/services/liveShopService";
+import { useSessionStatus } from "@/hooks/useSessionStatus";
+import { OnlinePayment } from "@/components/commerce/OnlinePayment";
 
 export default function OrderDetailsScreen() {
   const { id, placed } = useLocalSearchParams<{
@@ -20,14 +25,21 @@ export default function OrderDetailsScreen() {
     placed?: string;
   }>();
   const { state } = useShop();
-  const order = state.orders.find((item) => item.id === id);
+  const { user } = useSessionStatus();
+  const query = useQuery({
+    queryKey: ["order", user?.id, id],
+    queryFn: async () =>
+      orderFromApi(await api<RemoteOrder>(`orders/${id}`), user?.email || ""),
+    enabled: !!user && !!id,
+  });
+  const order = query.data || state.orders.find((item) => item.id === id);
   if (!order)
     return (
       <Screen>
         <EmptyState
           icon="receipt-outline"
           title="Order not found."
-          description="This preview order is not saved on this device."
+          description="This order is unavailable for your account."
           action="Back to the collection"
           onAction={() => router.replace("/shop")}
         />
@@ -45,7 +57,7 @@ export default function OrderDetailsScreen() {
           </Text>
           <Text style={styles.subtitle}>
             {placed
-              ? "Your preview order has been saved."
+              ? "Your order has been placed."
               : "A little reminder of your recent favorites."}
           </Text>
           <Text selectable style={styles.id}>
@@ -53,8 +65,7 @@ export default function OrderDetailsScreen() {
           </Text>
         </View>
         <Notice>
-          No payment was collected or order submitted. This receipt is saved on
-          your device only.
+          {`Order status: ${order.status || "pending"}. Payment: ${order.paymentStatus || "unpaid"}.`}
         </Notice>
         <View style={styles.items}>
           {order.items.map((item) => (
@@ -75,20 +86,21 @@ export default function OrderDetailsScreen() {
             </View>
           ))}
         </View>
-        <OrderSummary items={order.items}>
+        <OrderSummary items={order.items} serverTotals={order.totals}>
           <SummaryRow
             label="Payment selection"
             value={
               order.payment === "cod"
                 ? "Cash on delivery"
-                : order.payment === "card"
-                  ? "Card"
-                  : order.payment === "bkash"
-                    ? "bKash"
-                    : "Nagad"
+                : "Secure online payment"
             }
           />
         </OrderSummary>
+        {order.payment === "sslcommerz" &&
+          order.paymentStatus === "unpaid" &&
+          order.status !== "cancelled" && (
+            <OnlinePayment id={order.id} onRefresh={() => query.refetch()} />
+          )}
         <View style={styles.shipping}>
           <Text style={styles.shippingTitle}>Delivery details</Text>
           <Text style={styles.address}>

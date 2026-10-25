@@ -1,4 +1,5 @@
 export interface Product {
+  variants?: import("@/services/liveCatalogService").Variant[];
   id: string;
   name: string;
   slug: string;

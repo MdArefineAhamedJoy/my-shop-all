@@ -27,7 +27,7 @@ import { Save } from "lucide-react";
 const formSchema = z.object({
   customer: z.string().min(2, "Customer name is required"),
   email: z.string().email("Invalid email address"),
-  total: z.coerce.number().min(1, "Total must be at least 1"),
+  total: z.coerce.number<number>().min(1, "Total must be at least 1"),
   shippingAddress: z.string().min(5, "Address is required"),
 });
 
@@ -35,7 +35,7 @@ interface EditOrderModalProps {
   order: Order | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (id: string, values: any) => void;
+  onSubmit: (id: string, values: z.infer<typeof formSchema>) => void;
 }
 
 export default function EditOrderModal({
@@ -60,7 +60,8 @@ export default function EditOrderModal({
         customer: order.customer,
         email: order.email,
         total: order.total,
-        shippingAddress: order.shippingAddress || "123 Main St, Dhaka, Bangladesh",
+        shippingAddress:
+          order.shippingAddress || "123 Main St, Dhaka, Bangladesh",
       });
     }
   }, [order, form]);
@@ -75,16 +76,23 @@ export default function EditOrderModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Edit Order #{order?.id}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">
+            Edit Order #{order?.id}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 py-4"
+          >
             <FormField
               control={form.control}
               name="customer"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">Customer Name</FormLabel>
+                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">
+                    Customer Name
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} className="rounded-xl h-12 bg-slate-50" />
                   </FormControl>
@@ -97,7 +105,9 @@ export default function EditOrderModal({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">Email Address</FormLabel>
+                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">
+                    Email Address
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} className="rounded-xl h-12 bg-slate-50" />
                   </FormControl>
@@ -111,9 +121,15 @@ export default function EditOrderModal({
                 name="total"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold text-slate-400 uppercase">Total Amount (TK)</FormLabel>
+                    <FormLabel className="text-xs font-bold text-slate-400 uppercase">
+                      Total Amount (TK)
+                    </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} className="rounded-xl h-12 bg-slate-50" />
+                      <Input
+                        type="number"
+                        {...field}
+                        className="rounded-xl h-12 bg-slate-50"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -125,7 +141,9 @@ export default function EditOrderModal({
               name="shippingAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">Shipping Address</FormLabel>
+                  <FormLabel className="text-xs font-bold text-slate-400 uppercase">
+                    Shipping Address
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} className="rounded-xl h-12 bg-slate-50" />
                   </FormControl>
@@ -134,10 +152,19 @@ export default function EditOrderModal({
               )}
             />
             <DialogFooter className="pt-4">
-              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl font-bold">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onOpenChange(false)}
+                className="rounded-xl font-bold"
+              >
                 Cancel
               </Button>
-              <Button type="submit" variant="premium" className="rounded-xl font-bold px-8 shadow-slate-200">
+              <Button
+                type="submit"
+                variant="premium"
+                className="rounded-xl font-bold px-8 shadow-slate-200"
+              >
                 <Save size={18} className="mr-2" /> Update Order
               </Button>
             </DialogFooter>

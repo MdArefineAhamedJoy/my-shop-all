@@ -11,6 +11,7 @@ import { useCatalog } from "@/hooks/useCatalog";
 import { HeroCarousel } from "./components/HeroCarousel";
 import { Collections } from "./components/Collections";
 import { Newsletter } from "./components/Newsletter";
+import { useStorefront } from "@/hooks/useStorefront";
 
 const links = [
   { title: "Shop all", params: { gender: "", tag: "" } },
@@ -37,6 +38,7 @@ const sections = [
   },
 ];
 export default function HomeScreen() {
+  const storefront = useStorefront();
   const { data = [], isPending, isError, refetch } = useCatalog();
   return (
     <Screen padded={false} safeBottom={false}>
@@ -66,6 +68,11 @@ export default function HomeScreen() {
           </Pressable>
         ))}
       </ScrollView>
+      {!!storefront.data?.announcement && (
+        <Text style={{ textAlign: "center", padding: 12 }}>
+          {storefront.data.announcement}
+        </Text>
+      )}
       <HeroCarousel />
       <Collections />
       {isPending || isError ? (

@@ -1,6 +1,6 @@
 import ProductDetail from "@/components/product/ProductDetail";
 import RelatedProductsSlider from "@/components/product/RelatedProductsSlider";
-import { getProductBySlug, getProductsByCategory } from "@/lib/mockData";
+import { serverProduct, serverProducts } from "@/lib/server-catalog";
 import { notFound } from "next/navigation";
 
 export default async function ProductPage({
@@ -9,16 +9,16 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await serverProduct(slug);
 
   if (!product) {
     notFound();
   }
 
   // Get related products from the same category, excluding the current product
-  const relatedProducts = getProductsByCategory(product.category).filter(
-    (p) => p.id !== product.id,
-  );
+  const relatedProducts = (
+    await serverProducts({ category: product.category })
+  ).filter((p) => p.id !== product.id);
 
   return (
     <main

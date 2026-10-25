@@ -1,7 +1,7 @@
 import CategoryLayout from "@/components/shop/CategoryLayout";
 import ClassicBanner from "@/components/shop/ClassicBanner";
 import SubCategoryGrid from "@/components/shop/SubCategoryGrid";
-import { getProductsByGender } from "@/lib/mockData";
+import { serverProducts } from "@/lib/server-catalog";
 import { SubCategory } from "@/types/category.type";
 import { Product } from "@/types/product.type";
 
@@ -64,7 +64,7 @@ export default async function WomenPage({
 }) {
   const params = await searchParams;
   const selectedCategory = params?.category;
-  const allWomenProducts = getProductsByGender("women");
+  const allWomenProducts = await serverProducts({ gender: "women" });
 
   return (
     <main

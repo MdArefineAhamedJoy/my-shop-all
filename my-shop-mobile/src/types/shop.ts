@@ -1,12 +1,14 @@
 import type { Product } from "./product";
 
 export interface CartItem {
+  variantId?: string;
   product: Product;
   size: string;
   color: string;
   quantity: number;
 }
 export interface Filters {
+  collectionId?: string;
   query?: string;
   gender?: string;
   category?: string;
@@ -26,10 +28,21 @@ export interface Address {
   postalCode: string;
 }
 export interface SavedAddress extends Address {
+  version?: number;
   id: string;
   label: string;
 }
 export interface Order {
+  totals?: {
+    subtotalMinor: number;
+    discountMinor: number;
+    shippingMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+  };
+  status?: string;
+  paymentStatus?: string;
+  version?: number;
   id: string;
   createdAt: string;
   items: CartItem[];

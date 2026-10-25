@@ -5,21 +5,17 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 import { EmptyState, Icon, ProductImage, Text } from "@/components/ui";
 import { AppColors } from "@/constants";
 import { useShop } from "@/hooks/useShop";
-import { useSessionStatus } from "@/hooks/useSessionStatus";
 import { money } from "@/utils/commerce";
 
 export default function OrdersScreen() {
   const { state } = useShop();
-  const { user } = useSessionStatus();
-  const orders = state.orders.filter(
-    (order) => order.address.email.toLowerCase() === user?.email.toLowerCase()
-  );
+  const orders = state.orders;
   return (
     <Screen>
       <View style={styles.container}>
         <SectionHeading
           title="Your recent favorites."
-          subtitle="Preview orders saved on this device."
+          subtitle="Orders placed with your account."
         />
         {orders.length ? (
           orders.map((order) => (
@@ -43,7 +39,7 @@ export default function OrdersScreen() {
                   })}
                 </Text>
                 <View style={styles.badge}>
-                  <Text style={styles.badgeText}>Preview</Text>
+                  <Text style={styles.badgeText}>{order.status}</Text>
                 </View>
               </View>
               <View style={styles.row}>
@@ -76,7 +72,7 @@ export default function OrdersScreen() {
           <EmptyState
             icon="cube-outline"
             title="Your story starts here."
-            description="Orders placed in the checkout preview will appear here when the delivery email matches your profile."
+            description="Your orders will appear here after checkout."
             action="Find your first favorite"
             onAction={() => router.replace("/shop")}
           />

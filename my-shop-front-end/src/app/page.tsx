@@ -2,12 +2,22 @@ import FeaturedCollections from "@/components/home/FeaturedCollections";
 import HeroSlider from "@/components/home/HeroSlider";
 import Newsletter from "@/components/home/Newsletter";
 import ProductGrid from "@/components/home/ProductGrid";
-import { getProductsByTag } from "@/lib/mockData";
+import { serverProducts } from "@/lib/server-catalog";
 
-export default function HomePage() {
-  const newArrivals = getProductsByTag("new-arrival", 4);
-  const trending = getProductsByTag("trending", 4);
-  const bestSellers = getProductsByTag("bestseller", 4);
+export default async function HomePage() {
+  const products = await serverProducts();
+  const storefrontResponse = await fetch(
+    `${process.env.API_INTERNAL_URL || "http://127.0.0.1:4000/v1"}/storefront`,
+    { cache: "no-store" },
+  );
+  const { data: storefront } = await storefrontResponse.json();
+  const newArrivals = products.slice(0, 4);
+  const trending = products
+    .filter((p) => p.tags.includes("trending"))
+    .slice(0, 4);
+  const bestSellers = products
+    .filter((p) => p.tags.includes("bestseller"))
+    .slice(0, 4);
 
   return (
     <div
@@ -15,7 +25,12 @@ export default function HomePage() {
       style={{ paddingTop: "var(--header-height, 80px)" }}
     >
       {/* Hero Slider */}
-      <HeroSlider />
+      {storefront.announcement && (
+        <p className="bg-black text-white text-center p-2 text-sm">
+          {storefront.announcement}
+        </p>
+      )}
+      <HeroSlider banners={storefront.banners} />
 
       {/* Featured Collections */}
       <section className="py-16 md:py-20 bg-gray-50">

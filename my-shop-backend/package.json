@@ -1,0 +1,87 @@
+{
+  "name": "my-shop-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Modular MyShop API for web, mobile and administration",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "start:dev": "node --watch -r ts-node/register src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand",
+    "test:e2e": "jest --config test/jest-e2e.json --runInBand",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
+    "migration:run:prod": "typeorm migration:run -d dist/database/data-source.js",
+    "seed": "ts-node src/database/seed.ts",
+    "seed:demo": "ts-node src/database/seed-demo.ts",
+    "openapi": "node dist/scripts/openapi.js",
+    "setup:local": "node scripts/setup-local.mjs",
+    "load:smoke": "node scripts/load-smoke.mjs",
+    "format": "prettier --write src test scripts *.json *.yaml *.md",
+    "format:check": "prettier --check src test scripts *.json *.yaml *.md",
+    "test:migrations": "node scripts/verify-migrations.cjs"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/platform-express": "^11.1.0",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "dotenv": "^17.2.0",
+    "helmet": "^8.1.0",
+    "nodemailer": "^10.2.1",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.16.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "sharp": "^0.35.5",
+    "typeorm": "^0.3.27"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.1.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^22.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "@types/pdfkit": "^0.17.7",
+    "@types/pg": "^8.15.0",
+    "@types/supertest": "^6.0.0",
+    "jest": "^30.0.0",
+    "prettier": "^3.9.10",
+    "supertest": "^7.1.0",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.0"
+  },
+  "jest": {
+    "testRegex": ".*\\.spec\\.ts$",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/test/"
+    ],
+    "transform": {
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.json"
+        }
+      ]
+    },
+    "testEnvironment": "node"
+  },
+  "overrides": {
+    "multer": "^2.5.0",
+    "js-yaml": "^5.4.1"
+  }
+}

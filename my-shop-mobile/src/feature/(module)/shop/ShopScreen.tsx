@@ -4,18 +4,33 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { CatalogState } from "@/components/commerce/CatalogState";
 import { ProductList } from "@/components/commerce/ProductList";
-import { Chip, EmptyState, IconButton, Input, Text } from "@/components/ui";
+import {
+  Button,
+  Chip,
+  EmptyState,
+  IconButton,
+  Input,
+  Text,
+} from "@/components/ui";
 import { AppColors } from "@/constants";
 import { categories, collectionBanners } from "@/data/storefront";
 import { imageSource } from "@/data/images";
-import { useCatalog } from "@/hooks/useCatalog";
+import { useCatalogPages } from "@/hooks/useCatalogPages";
 import { filterProducts } from "@/utils/commerce";
 import { FilterSheet } from "./components/FilterSheet";
 import { useShopFilters } from "./hooks/useShopFilters";
 
 export default function ShopScreen() {
   const state = useShopFilters();
-  const { data = [], isPending, isError, refetch } = useCatalog();
+  const {
+    data,
+    isPending,
+    isError,
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useCatalogPages(state.filters);
   const { gender, tag, category } = state.filters;
   const products = filterProducts(data, state.filters);
   const image =
@@ -111,6 +126,15 @@ export default function ShopScreen() {
       <ProductList
         products={isPending || isError ? [] : products}
         header={header}
+        footer={
+          hasNextPage ? (
+            <Button
+              title={isFetchingNextPage ? "Loading…" : "Load more products"}
+              disabled={isFetchingNextPage}
+              onPress={() => void fetchNextPage()}
+            />
+          ) : undefined
+        }
         empty={
           isPending || isError ? (
             <CatalogState error={isError} onRetry={() => void refetch()} />

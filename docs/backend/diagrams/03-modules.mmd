@@ -1,0 +1,33 @@
+flowchart TB
+    HTTP["REST controllers and permission guards"]
+    Identity["Identity and customer profiles"]
+    Catalog["Catalog and published content"]
+    Shopping["Cart and wishlist"]
+    Checkout["Checkout application service<br/>Shared SQL unit of work"]
+    Inventory["Inventory<br/>Balances, holds, movements"]
+    Orders["Orders<br/>Snapshots and lifecycle"]
+    Payments["Payments<br/>Attempts, settlement, refunds"]
+    Fulfillment["Fulfillment and returns"]
+    Reporting["Reporting and documents"]
+    Outbox["Transactional outbox<br/>Asynchronous consumers"]
+    HTTP --> Identity
+    HTTP --> Catalog
+    HTTP --> Shopping
+    HTTP --> Checkout
+    HTTP --> Fulfillment
+    Checkout --> Catalog
+    Checkout --> Shopping
+    Checkout --> Inventory
+    Checkout --> Orders
+    Checkout --> Payments
+    Payments -->|Verified capture command| Orders
+    Payments -->|Allocate or compensate| Inventory
+    Fulfillment --> Orders
+    Fulfillment --> Inventory
+    Fulfillment -->|Refund request| Payments
+    Orders --> Outbox
+    Payments --> Outbox
+    Catalog --> Outbox
+    Outbox --> Reporting
+    classDef orchestration fill:#fff3df,stroke:#ad6412,color:#52320d
+    class Checkout orchestration

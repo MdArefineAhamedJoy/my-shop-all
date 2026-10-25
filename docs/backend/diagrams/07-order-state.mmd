@@ -1,0 +1,26 @@
+stateDiagram-v2
+    [*] --> awaiting_payment: Online placement and stock hold
+    [*] --> pending: COD placement and stock allocation
+    awaiting_payment --> pending: Verified capture and active hold, allocate
+    awaiting_payment --> expired: Timeout wins lock, release hold
+    awaiting_payment --> cancelled: Cancellation wins lock, release hold
+    pending --> processing: Authorized fulfillment command
+    pending --> cancelled: Eligible cancellation, release allocation
+    processing --> cancelled: Staff cancellation before shipping, release
+    processing --> shipped: Commit shipment and consume stock
+    shipped --> delivered: Trusted delivery evidence
+    delivered --> [*]
+    cancelled --> [*]
+    expired --> [*]
+    note right of pending
+        COD may remain unpaid.
+        Online order has verified settlement.
+    end note
+    note right of delivered
+        Returns and refunds have separate states.
+        COD collection is a separate fact.
+    end note
+    note left of expired
+        Late capture creates a payment exception
+        and refund task, it does not revive order.
+    end note

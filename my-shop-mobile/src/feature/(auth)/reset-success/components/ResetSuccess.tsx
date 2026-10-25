@@ -7,13 +7,12 @@ export default function ResetSuccess() {
   return (
     <AuthFormScreen
       title="You're all set."
-      subtitle="The password reset preview is complete. You can return to sign in."
+      subtitle="Your password has been changed. Sign in with your new password."
       icon="checkmark-circle-outline"
     >
       <View style={styles.notice}>
         <Notice tone="success">
-          No real password was changed. Your new password was not saved or sent
-          anywhere.
+          Your existing sessions have been revoked for account security.
         </Notice>
       </View>
       <Button

@@ -1,14 +1,16 @@
 export interface UserProfile {
+  version?: number;
   id: string;
   name: string;
   email: string;
   phone?: string;
 }
 export interface PreviewSession {
-  mode: "preview";
+  mode: "live";
   user: UserProfile;
 }
 export interface LoginInput {
+  mfaCode?: string;
   email: string;
   password: string;
 }

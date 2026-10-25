@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    actor Customer
+    participant Client as Web or mobile
+    participant API as Checkout API
+    participant DB as PostgreSQL
+    participant Worker as Durable worker
+    participant Provider as Payment provider
+    Customer->>Client: Confirm variants and delivery
+    Client->>API: Create quote with cart version
+    API->>DB: Read current prices and policies
+    DB-->>API: Validated pricing facts
+    API-->>Client: Quote, totals, expiry, no stock hold
+    Client->>API: Place order with quote and idempotency key
+    rect rgb(235, 247, 240)
+        API->>DB: BEGIN, claim key, lock quote and sorted balances
+        API->>DB: Validate versions, reserve all lines
+        alt Any validation or stock check fails
+            API->>DB: ROLLBACK all effects
+            API-->>Client: Conflict and actionable details
+        else All checks pass
+            API->>DB: Order, snapshots, reservations and outbox
+            alt Cash on delivery
+                API->>DB: Allocate stock, payment remains unpaid
+            else Online method
+                API->>DB: Create payment attempt and initialization task
+            end
+            API->>DB: Save safe replay response, COMMIT
+            API-->>Client: Durable order ID and payment action state
+        end
+    end
+    opt Online order committed
+        Worker->>DB: Lease same payment initialization task
+        Worker->>Provider: Initialize with stable operation reference
+        Provider-->>Worker: Hosted action or unknown outcome
+        Worker->>DB: Persist action or reconciliation task
+        Client->>API: Fetch owned payment action
+        API-->>Client: Allowlisted redirect or initializing state
+    end

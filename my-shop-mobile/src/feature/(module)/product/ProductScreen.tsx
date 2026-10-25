@@ -13,7 +13,10 @@ import {
   Text,
 } from "@/components/ui";
 import { AppColors } from "@/constants";
-import { getProductBySlug, MOCK_PRODUCTS } from "@/data/products";
+import { useQuery } from "@tanstack/react-query";
+import { catalogService } from "@/services/catalogService";
+import { useCatalog } from "@/hooks/useCatalog";
+import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { useResponsive } from "@/hooks/useResponsive";
 import type { Product } from "@/types/product";
 import { money } from "@/utils/commerce";
@@ -24,7 +27,13 @@ import { useProductDetails } from "./hooks/useProductDetails";
 
 export default function ProductScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const product = getProductBySlug(Array.isArray(slug) ? slug[0] : slug);
+  const key = Array.isArray(slug) ? slug[0] : slug;
+  const { data: product, isPending } = useQuery({
+    queryKey: ["product", key],
+    queryFn: () => catalogService.detail(key),
+    enabled: !!key,
+  });
+  if (isPending) return <LoadingScreen />;
   return product ? (
     <ProductDetails key={product.id} product={product} />
   ) : (
@@ -41,9 +50,12 @@ export default function ProductScreen() {
 function ProductDetails({ product }: { product: Product }) {
   const selection = useProductDetails(product);
   const { isWide } = useResponsive();
-  const related = MOCK_PRODUCTS.filter(
-    (item) => item.category === product.category && item.id !== product.id
-  ).slice(0, 4);
+  const { data: catalog = [] } = useCatalog();
+  const related = catalog
+    .filter(
+      (item) => item.category === product.category && item.id !== product.id
+    )
+    .slice(0, 4);
   const footer = (
     <View style={styles.footerWrap}>
       {!!selection.message && (
