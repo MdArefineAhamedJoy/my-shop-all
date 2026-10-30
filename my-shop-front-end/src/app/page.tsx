@@ -5,19 +5,16 @@ import ProductGrid from "@/components/home/ProductGrid";
 import { serverProducts } from "@/lib/server-catalog";
 
 export default async function HomePage() {
-  const products = await serverProducts();
+  const [newArrivals, trending, bestSellers] = await Promise.all([
+    serverProducts({ tag: "new-arrival", limit: "10" }),
+    serverProducts({ tag: "trending", limit: "10" }),
+    serverProducts({ tag: "bestseller", limit: "10" }),
+  ]);
   const storefrontResponse = await fetch(
     `${process.env.API_INTERNAL_URL || "http://127.0.0.1:4000/v1"}/storefront`,
     { cache: "no-store" },
   );
   const { data: storefront } = await storefrontResponse.json();
-  const newArrivals = products.slice(0, 4);
-  const trending = products
-    .filter((p) => p.tags.includes("trending"))
-    .slice(0, 4);
-  const bestSellers = products
-    .filter((p) => p.tags.includes("bestseller"))
-    .slice(0, 4);
 
   return (
     <div

@@ -11,6 +11,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
+COPY --chown=node:node demo-assets ./demo-assets
 COPY --chown=node:node package*.json ./
 RUN mkdir -p storage/images && chown -R node:node storage
 USER node

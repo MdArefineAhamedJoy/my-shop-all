@@ -16,6 +16,14 @@ export function productFromApi(p: ApiProduct): Product {
     stock: variants.reduce((sum, v) => sum + v.maxOrderQuantity, 0),
     sku: variants[0]?.sku || "",
     variants,
-    tags: [...p.tags, ...(p.isNew ? ["new-arrival"] : [])],
+    tags: [
+      ...p.tags,
+      ...(p.isNew ? ["new-arrival"] : []),
+      ...(variants.some(
+        (v) => v.compareAtMinor && v.compareAtMinor > v.priceMinor,
+      )
+        ? ["sale"]
+        : []),
+    ],
   };
 }

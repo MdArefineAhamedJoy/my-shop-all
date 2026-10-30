@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { constants } from "node:fs";
+import { constants, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes } from "node:crypto";
 import dataSource from "./data-source";
@@ -20,13 +20,21 @@ async function main() {
   if (process.env.NODE_ENV === "production")
     throw new Error("Demo data is disabled in production");
   const databaseUrl = new URL(process.env.DATABASE_URL!);
-  if (!["localhost", "127.0.0.1", "[::1]"].includes(databaseUrl.hostname))
+  const localDatabase = ["localhost", "127.0.0.1", "[::1]"].includes(
+    databaseUrl.hostname,
+  );
+  const composeDatabase =
+    databaseUrl.hostname === "postgres" && existsSync("/.dockerenv");
+  if (!localDatabase && !composeDatabase)
     throw new Error("Demo seed is limited to a local PostgreSQL database");
   await dataSource.initialize();
   try {
     if (await dataSource.showMigrations())
       throw new Error("Run migration:run first");
-    const credentialsPath = resolve(".local-demo-accounts.json");
+    const credentialsPath = resolve(
+      process.env.DEMO_CREDENTIALS_PATH || ".local-demo-accounts.json",
+    );
+    await mkdir(resolve(credentialsPath, ".."), { recursive: true });
     let credentials: DemoCredentials;
     try {
       credentials = JSON.parse(
@@ -79,11 +87,11 @@ async function main() {
     );
     console.log(
       result.inserted
-        ? "Demo dataset added: 32 products, 12 customers, 2 MFA staff, 40 orders, 20 COD collections, 7 returns, 2 refunds, 5 coupons and 6 collections."
+        ? `Demo dataset added: ${demoProducts.length} products, 12 customers, 2 MFA staff, 120 orders, 60 COD collections, 60 returns, 10 refunds, 10 coupons and 10 collections.`
         : "Demo dataset already exists; all current data and stock were preserved.",
     );
     console.log(
-      "Private demo logins: .local-demo-accounts.json (ignored by Git and Docker)",
+      `Private demo logins: ${credentialsPath} (keep private; never commit)`,
     );
     console.log(
       "No mail or gateway transactions were queued. Existing accounts and published storefront content were preserved.",

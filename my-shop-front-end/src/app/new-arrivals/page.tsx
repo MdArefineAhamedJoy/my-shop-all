@@ -1,4 +1,6 @@
 import ClassicBanner from "@/components/shop/ClassicBanner";
+import ProductGrid from "@/components/home/ProductGrid";
+import { serverProducts } from "@/lib/server-catalog";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,7 +10,7 @@ const arrivalCategories = [
     name: "Men Arrivals",
     image:
       "https://images.unsplash.com/photo-1488161628813-04466f872be2?q=80&w=1964&auto=format&fit=crop",
-    href: "/men?tag=new-arrival",
+    href: "/shop?gender=men&tag=new-arrival",
     subtitle: "Modern Classics",
   },
   {
@@ -16,7 +18,7 @@ const arrivalCategories = [
     name: "Women Arrivals",
     image:
       "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
-    href: "/women?tag=new-arrival",
+    href: "/shop?gender=women&tag=new-arrival",
     subtitle: "Elegant Styles",
   },
   {
@@ -70,7 +72,8 @@ const ArrivalGrid = () => {
   );
 };
 
-export default function NewArrivalsPage() {
+export default async function NewArrivalsPage() {
+  const products = await serverProducts({ tag: "new-arrival", limit: "10" });
   return (
     <main
       className="bg-white"
@@ -98,6 +101,11 @@ export default function NewArrivalsPage() {
       </div>
 
       <ArrivalGrid />
+      <ProductGrid
+        title="Just Arrived"
+        products={products}
+        viewAllLink="/shop?tag=new-arrival"
+      />
     </main>
   );
 }

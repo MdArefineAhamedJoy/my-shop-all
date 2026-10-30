@@ -3,6 +3,7 @@
 import ProductCard from "@/components/product/ProductCard";
 import ShopDiscoveryBar from "@/components/shop/ShopDiscoveryBar";
 import { useCatalog } from "@/lib/catalog";
+import { categorySlug } from "@/lib/category-slug";
 import { AnimatePresence, motion } from "framer-motion";
 import { use, useEffect, useMemo, useState } from "react";
 
@@ -19,7 +20,8 @@ const ITEMS_PER_PAGE = 16;
 
 export default function ShopPage({ searchParams }: ShopPageProps) {
   const params = use(searchParams);
-  const { category, gender, tag, priceMax } = params;
+  const { gender, tag, priceMax } = params;
+  const category = params.category ? categorySlug(params.category) : undefined;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [localSearchQuery, setLocalSearchQuery] = useState("");

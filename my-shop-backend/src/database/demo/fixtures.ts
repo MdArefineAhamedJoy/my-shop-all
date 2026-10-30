@@ -32,6 +32,11 @@ export const demoCategories = [
   "Outerwear",
   "Baby",
   "Accessories",
+  "Polos",
+  "Caps",
+  "Tops",
+  "Skirts",
+  "Shoes",
 ];
 export const slugify = (value: string) =>
   value
@@ -270,6 +275,86 @@ export const demoProducts: DemoProduct[] = [
     ["39", "40", "41", "42"],
   ),
 ];
+
+// Keep the original product positions stable: orders and stock use their IDs.
+// Shared categories have ten products available to both gender filters.
+const additionalCategories: DemoProduct[] = [
+  item("Cotton Pique Polo", "Polos", "unisex", 1399, "polo-shirt", [
+    "navy",
+    "white",
+  ]),
+  item(
+    "Cotton Baseball Cap",
+    "Caps",
+    "unisex",
+    699,
+    "cap",
+    ["black", "beige"],
+    ["One Size"],
+  ),
+  item("Linen Blouse", "Tops", "women", 1599, "women-style", ["white", "pink"]),
+  item("Pleated Midi Skirt", "Skirts", "women", 1999, "women-dress", [
+    "navy",
+    "beige",
+  ]),
+  item(
+    "Canvas Sneakers",
+    "Shoes",
+    "unisex",
+    2499,
+    "sneakers",
+    ["white", "black"],
+    ["38", "39", "40", "41", "42"],
+  ),
+];
+const styles = [
+  "Everyday",
+  "Classic",
+  "Urban",
+  "Weekend",
+  "Soft",
+  "Signature",
+  "Modern",
+  "Relaxed",
+  "Essential",
+  "Heritage",
+  "Coastal",
+  "Minimal",
+];
+for (const category of demoCategories) {
+  const originals = demoProducts.filter(
+    (product) => product.category === category,
+  );
+  const base =
+    originals[0] ||
+    additionalCategories.find((product) => product.category === category)!;
+  const gender = ["Dresses", "Kurtis", "Tops", "Skirts"].includes(category)
+    ? "women"
+    : "unisex";
+  const enough = () => {
+    const products = demoProducts.filter(
+      (product) => product.category === category,
+    );
+    return gender === "women"
+      ? products.length >= 10
+      : ["men", "women"].every(
+          (filter) =>
+            products.filter(
+              (product) =>
+                product.gender === filter || product.gender === "unisex",
+            ).length >= 10,
+        );
+  };
+  for (let i = 0; !enough(); i++) {
+    const template = originals[i % originals.length] || base;
+    demoProducts.push({
+      ...template,
+      name: `${styles[i % styles.length]} ${template.name} - ${category} Edit`,
+      gender,
+      price: template.price + (i % 4) * 100,
+    });
+  }
+}
 
 export const demoStaff = [
   {

@@ -1,0 +1,28 @@
+name: myshop_verify
+
+include:
+  - path: ./my-shop-backend/compose.yaml
+
+services:
+  web:
+    build: ./my-shop-front-end
+    environment:
+      API_INTERNAL_URL: http://api:4000/v1
+      APP_ORIGIN: http://127.0.0.1:3000
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+  admin:
+    build: ./my-shop-admin-dashboard
+    environment:
+      API_INTERNAL_URL: http://api:4000/v1
+      APP_ORIGIN: http://127.0.0.1:3001
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

@@ -29,7 +29,7 @@ For a compiled server, run `npm run build` followed by `npm start`. Startup reje
 
 After migrations and the administrator seed, run `npm run seed:demo` from this directory. The command is restricted to a local PostgreSQL database and refuses `NODE_ENV=production`.
 
-It adds 32 published products across eight categories, 228 size/color variants with stock and movement history, 12 fictional customers with addresses, carts and wishlists, two staff accounts with mandatory MFA, 40 orders across every fulfillment state, 20 synthetic COD collections, seven returns, two refunds, five coupons, six collections, newsletter samples, audit history and a storefront draft. The storefront is published only when no published revision already exists. All clients connected to this API read the same data. Product images are bundled and served locally; homepage banner images use Unsplash.
+It adds 142 published products across 13 categories, with at least ten products for every supported category/gender filter, size/color variants with stock and movement history, 12 fictional customers with ten addresses, cart items, wishlist items and orders each, two staff accounts with mandatory MFA, 120 orders across every fulfillment state, 60 synthetic COD collections, 60 returns (ten per state), ten refunds, ten coupons, ten collections with at least ten products each, newsletter samples, audit history and a storefront draft. The storefront is published only when no published revision already exists. All clients connected to this API read the same data. Product images are bundled and served locally; homepage banner images use Unsplash.
 
 Private customer and staff logins are saved to `.local-demo-accounts.json`, excluded from Git and Docker. Use `demo.ayan@example.com` and its password from that file to explore a customer account with an existing cart, wishlist and order history. Staff entries also contain authenticator enrollment URIs. Existing administrator credentials are unchanged.
 
@@ -48,7 +48,17 @@ docker compose up --build -d
 docker compose exec api node dist/database/seed.js
 ```
 
-Mailpit: [localhost:8025](http://localhost:8025). API, database and mail ports bind to loopback. Stop any other local PostgreSQL on port 5433 first, or change the mapping. Database and media use named volumes. The image runs as the `node` user. Docker Desktop's daemon was unavailable during implementation, so image/Compose execution has not been verified here.
+Mailpit: [127.0.0.1:8025](http://127.0.0.1:8025). API, database and mail ports bind to loopback. Stop any other local PostgreSQL on port 5433 first, or change the mapping. Database and media use named volumes. The image runs as the `node` user. The local Docker stack, demo seed, API connections and persistence across container recreation have been verified.
+
+From the repository root, `docker compose up --build -d` also starts the storefront and admin. The project name and database/media volume names match the existing `myshop_verify` stack, so the default command reuses its data. Mailpit stores messages in its own named volume. Use `docker compose stop` or `docker compose down` to stop services while retaining these volumes. `docker compose down -v` explicitly deletes volumes and their data.
+
+Seed the local Docker stack after administrator initialization:
+
+```powershell
+docker compose exec api node dist/database/seed-demo.js
+```
+
+The seed accepts the private `postgres` hostname only inside Docker, and still refuses production. Demo credentials are saved to `/app/storage/.local-demo-accounts.json` in the media volume. Keep a private local copy with `docker cp myshop_verify-api-1:/app/storage/.local-demo-accounts.json my-shop-backend/.local-demo-accounts.json` from the repository root. Product images are included in the backend image and copied to the persistent media volume. Repeated seeding preserves existing records and stock.
 
 ## Swagger test flow
 

@@ -2,6 +2,8 @@ import CategoryLayout from "@/components/shop/CategoryLayout";
 import ClassicBanner from "@/components/shop/ClassicBanner";
 import SubCategoryGrid from "@/components/shop/SubCategoryGrid";
 import { serverProducts } from "@/lib/server-catalog";
+import { categorySlug } from "@/lib/category-slug";
+import ProductGrid from "@/components/home/ProductGrid";
 import { SubCategory } from "@/types/category.type";
 import { Product } from "@/types/product.type";
 
@@ -63,8 +65,13 @@ export default async function WomenPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const params = await searchParams;
-  const selectedCategory = params?.category;
-  const allWomenProducts = await serverProducts({ gender: "women" });
+  const selectedCategory = params.category
+    ? categorySlug(params.category)
+    : undefined;
+  const allWomenProducts = await serverProducts({
+    gender: "women",
+    ...(selectedCategory ? { category: selectedCategory } : {}),
+  });
 
   return (
     <main
@@ -90,6 +97,13 @@ export default async function WomenPage({
         />
       ) : (
         <SubCategoryGrid gender="women" categories={womenCategories} />
+      )}
+      {!selectedCategory && (
+        <ProductGrid
+          title="Women's Picks"
+          products={allWomenProducts.slice(0, 10)}
+          viewAllLink="/shop?gender=women"
+        />
       )}
     </main>
   );

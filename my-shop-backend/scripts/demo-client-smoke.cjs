@@ -6,8 +6,8 @@ const {
 } = require("../../my-shop-mobile/node_modules/@playwright/test");
 const { totp } = require("../dist/modules/auth/crypto");
 const { demoId } = require("../dist/database/demo/fixtures");
-const web = "http://localhost:3000";
-const admin = "http://localhost:3001";
+const web = "http://127.0.0.1:3000";
+const admin = "http://127.0.0.1:3001";
 const mobile = "http://localhost:8081";
 const credentials = JSON.parse(
   fs.readFileSync(".local-demo-accounts.json", "utf8"),
@@ -29,11 +29,13 @@ async function main() {
   try {
     const page = await context.newPage();
     page.setDefaultTimeout(60000);
+    const [latestProduct] = await read(
+      context.request,
+      web,
+      "products?limit=1",
+    );
     await page.goto(`${web}/shop`, { waitUntil: "domcontentloaded" });
-    await page
-      .getByText("Everyday Casual Sneakers", { exact: true })
-      .first()
-      .waitFor();
+    await page.getByText(latestProduct.name, { exact: true }).first().waitFor();
     await page.goto(`${web}/product/demo-premium-navy-cotton-shirt`, {
       waitUntil: "domcontentloaded",
     });
@@ -53,10 +55,10 @@ async function main() {
     });
     assert.equal(login.status(), 201);
     const cart = await read(context.request, web, "cart");
-    assert.equal(cart.items.length, 2);
-    assert.equal((await read(context.request, web, "me/wishlist")).length, 3);
-    assert.equal((await read(context.request, web, "me/addresses")).length, 2);
-    assert.equal((await read(context.request, web, "me/orders")).length, 4);
+    assert.equal(cart.items.length, 10);
+    assert.equal((await read(context.request, web, "me/wishlist")).length, 10);
+    assert.equal((await read(context.request, web, "me/addresses")).length, 10);
+    assert.equal((await read(context.request, web, "me/orders")).length, 10);
     await page.goto(`${web}/account`, { waitUntil: "domcontentloaded" });
     await page
       .getByText(/DEMO-00001/)
@@ -89,27 +91,27 @@ async function main() {
       admin,
       "admin/reports/overview",
     );
-    assert.ok(overview.ordersPlaced >= 40);
+    assert.ok(overview.ordersPlaced >= 120);
     assert.ok(Number(overview.refundedMinor) > 0);
     assert.equal(
       (await read(adminContext.request, admin, "admin/returns?limit=100"))
         .length,
-      7,
+      60,
     );
     assert.equal(
       (await read(adminContext.request, admin, "admin/promotions?limit=100"))
         .length,
-      5,
+      10,
     );
     assert.equal(
       (await read(adminContext.request, admin, "admin/collections")).length,
-      6,
+      10,
     );
     const adminPage = await adminContext.newPage();
     adminPage.setDefaultTimeout(60000);
     for (const [path, text] of [
       ["/", "Daily orders"],
-      ["/products", "Everyday Casual Sneakers"],
+      ["/products", latestProduct.name],
       ["/categories", /Baby.*Active/],
       ["/orders", /DEMO-00001/],
       ["/invoices", /DEMO-/],

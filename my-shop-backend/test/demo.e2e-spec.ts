@@ -91,15 +91,15 @@ describe("Local demo dataset against PostgreSQL", () => {
       (SELECT count(*)::int FROM refunds WHERE reference LIKE 'DEMO-%') AS refunds,
       (SELECT count(*)::int FROM returns WHERE reason LIKE 'Demo%') AS returns`);
     expect(counts).toEqual({
-      products: 32,
+      products: demoProducts.length,
       variants: demoProducts.reduce(
         (n, p) => n + p.colors.length * p.sizes.length,
         0,
       ),
-      orders: 40,
-      payments: 20,
-      refunds: 2,
-      returns: 7,
+      orders: 120,
+      payments: 60,
+      refunds: 10,
+      returns: 60,
     });
     expect(await runner.manager.count(OutboxEvent)).toBe(outboxCount);
     expect(
@@ -114,6 +114,33 @@ describe("Local demo dataset against PostgreSQL", () => {
     });
     expect(staff.role).toBe(Role.STAFF);
     expect(staff.permissions).not.toContain("refunds:record");
+  });
+
+  it("supplies ten rows for category filters, collections and customer pages", async () => {
+    const shortCategories = await runner.query(`
+      SELECT c.slug, g.gender FROM categories c
+      CROSS JOIN (VALUES ('men'), ('women')) AS g(gender)
+      LEFT JOIN products p ON p.category_id=c.id AND p.slug LIKE 'demo-%'
+        AND p.gender IN (g.gender, 'unisex')
+      WHERE c.slug NOT IN ('dresses','kurtis','tops','skirts') OR g.gender='women'
+      GROUP BY c.id,g.gender HAVING count(p.id)<10`);
+    expect(shortCategories).toEqual([]);
+    expect(
+      await runner.query(
+        `SELECT id FROM collections WHERE slug LIKE 'demo-%' AND cardinality(product_ids)<10`,
+      ),
+    ).toEqual([]);
+    expect(
+      await runner.query(`SELECT u.id FROM users u WHERE u.email LIKE 'demo.%@example.com' AND u.role='customer' AND (
+      (SELECT count(*) FROM cart_items WHERE user_id=u.id)<10 OR
+      (SELECT count(*) FROM wishlist_items WHERE user_id=u.id)<10 OR
+      (SELECT count(*) FROM addresses WHERE user_id=u.id)<10 OR
+      (SELECT count(*) FROM orders WHERE user_id=u.id)<10)`),
+    ).toEqual([]);
+    const [counts] = await runner.query(`SELECT
+      (SELECT count(*)::int FROM promotions WHERE code LIKE 'DEMO%') AS promotions,
+      (SELECT count(*)::int FROM collections WHERE slug LIKE 'demo-%') AS collections`);
+    expect(counts).toEqual({ promotions: 10, collections: 10 });
   });
 
   it("keeps stock ledgers, order totals, payments and refunds consistent", async () => {

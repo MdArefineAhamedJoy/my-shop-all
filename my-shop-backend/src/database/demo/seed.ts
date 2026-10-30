@@ -168,6 +168,17 @@ export async function seedDemo(
       details: { ...address, line1: `${i + 1} Sample Office Road (fictional)` },
       isDefault: false,
     });
+    for (let n = 2; n < 10; n++) {
+      await insert(Address, `address:${i}:delivery:${n}`, {
+        userId: user.id,
+        label: `Demo delivery ${n + 1}`,
+        details: {
+          ...address,
+          line1: `${n + 1} Sample Delivery Road (fictional)`,
+        },
+        isDefault: false,
+      });
+    }
     await insert(NewsletterSubscription, `newsletter:${i}`, {
       email,
       confirmed: true,
@@ -207,7 +218,7 @@ export async function seedDemo(
   }
   const products: { product: Product; variants: Variant[] }[] = [];
   for (const [i, fixture] of demoProducts.entries()) {
-    const createdAt = ago(35 - i / 2);
+    const createdAt = ago(90 - (i / demoProducts.length) * 30);
     const product = await insert(Product, `product:${i}`, {
       name: fixture.name,
       slug: `demo-${slugify(fixture.name)}`,
@@ -269,15 +280,15 @@ export async function seedDemo(
     await audit(`product:${i}`, "demo.product.create", product.id, createdAt);
   }
   for (const [i, customer] of customers.entries()) {
-    for (let n = 0; n < 2; n++) {
+    for (let n = 0; n < 10; n++) {
       const entry = products[(i * 2 + n) % products.length];
       await insert(CartItem, `cart:${i}:${n}`, {
         userId: customer.user.id,
         variantId: entry.variants[0].id,
-        quantity: n + 1,
+        quantity: (n % 2) + 1,
       });
     }
-    for (let n = 0; n < 3; n++)
+    for (let n = 0; n < 10; n++)
       await insert(WishlistItem, `wishlist:${i}:${n}`, {
         userId: customer.user.id,
         productId: products[(i + n * 3) % products.length].product.id,
@@ -291,10 +302,9 @@ export async function seedDemo(
     "received",
     "inspected",
     "closed",
-    "closed",
-  ];
+  ].flatMap((state) => Array<string>(10).fill(state));
   let returnCount = 0;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 120; i++) {
     const customer = customers[i % customers.length];
     const status = [
       "pending",
@@ -306,7 +316,7 @@ export async function seedDemo(
       "delivered",
       "cancelled",
     ][i % 8];
-    const createdAt = ago((i + 1) * 0.7);
+    const createdAt = ago(3 + (i / 120) * 24);
     const lines: QuoteLine[] = [
       products[i % products.length],
       products[(i + 7) % products.length],
@@ -458,11 +468,13 @@ export async function seedDemo(
         const r = returnCount++;
         const state = returnStates[r];
         const inspected = ["inspected", "closed"].includes(state);
-        const returned = r === 6 ? orderLines : orderLines.slice(0, 1);
+        const returned = r % 2 === 0 ? orderLines : orderLines.slice(0, 1);
         const returnLines = returned.map((l) => ({
           orderLineId: l.id,
-          quantity: r === 6 ? l.quantity : 1,
-          ...(inspected ? { restockQuantity: r === 6 ? l.quantity : 1 } : {}),
+          quantity: r % 2 === 0 ? l.quantity : 1,
+          ...(inspected
+            ? { restockQuantity: r % 2 === 0 ? l.quantity : 1 }
+            : {}),
         }));
         const request = await insert(ReturnRequest, `return:${r}`, {
           orderId: order.id,
@@ -500,7 +512,7 @@ export async function seedDemo(
           }
         if (state === "closed") {
           const amountMinor =
-            r === 6
+            r % 2 === 0
               ? totals.totalMinor
               : Math.floor(
                   (orderLines[0].unitPriceMinor *
@@ -538,10 +550,15 @@ export async function seedDemo(
     "DEMOVIP20",
     "DEMOEXPIRED",
     "DEMODISABLED",
+    "DEMOWELCOME",
+    "DEMOFAMILY",
+    "DEMOSTYLE",
+    "DEMOWEEKEND",
+    "DEMOLOYAL",
   ].entries()) {
     await insert(Promotion, `promotion:${i}`, {
       code,
-      percent: [10, 15, 20, 10, 5][i],
+      percent: [10, 15, 20, 10, 5, 10, 12, 8, 15, 20][i],
       minimumMinor: i === 0 ? 0 : 200000,
       maxUses: 500,
       usedCount: 0,
@@ -560,9 +577,38 @@ export async function seedDemo(
     ],
     [
       "Women's Edit",
-      products.map((_, i) => i).filter((i) => i >= 16 && i < 24),
+      products
+        .map((_, i) => i)
+        .filter((i) => products[i].product.gender === "women"),
     ],
-    ["Little Ones", [24, 25, 26, 27]],
+    [
+      "Little Ones",
+      products
+        .map((_, i) => i)
+        .filter(
+          (i) => products[i].product.categoryId === categoryIds.get("Baby"),
+        ),
+    ],
+    [
+      "Men's Edit",
+      products
+        .map((_, i) => i)
+        .filter((i) => products[i].product.gender !== "women"),
+    ],
+    [
+      "Everyday Basics",
+      products.map((_, i) => i).filter((i) => demoProducts[i].price < 1600),
+    ],
+    [
+      "Accessories",
+      products
+        .map((_, i) => i)
+        .filter(
+          (i) =>
+            products[i].product.categoryId === categoryIds.get("Accessories"),
+        ),
+    ],
+    ["Sale Picks", products.map((_, i) => i).filter((i) => i % 3 === 0)],
   ] as [string, number[]][]) {
     await insert(Collection, `collection:${name}`, {
       name,
@@ -613,7 +659,7 @@ export async function seedDemo(
       dataset: "v1",
       products: demoProducts.length,
       customers: demoCustomers.length,
-      orders: 40,
+      orders: 120,
       note,
     },
   });
